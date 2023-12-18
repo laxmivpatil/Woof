@@ -1,8 +1,10 @@
-# Ignore all files in the target folder
-/target/*
-
-# Allow empty folders to be created
-!/target/
-
+ 
 # Ignore JAR files within the target folder
 /target/*.jar
+
+
+# Ignore specific files
+.classpath
+.factorypath
+.project
+HELP.md
