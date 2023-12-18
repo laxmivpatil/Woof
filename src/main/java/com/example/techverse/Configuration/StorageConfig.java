@@ -18,8 +18,8 @@ import com.google.cloud.storage.StorageOptions;
 
 @Configuration 
 public class StorageConfig {
-	 @Value("${GOOGLE_APPLICATION_CREDENTIALS}") // Use the environment variable you set
-	    private String credentialsPath;
+	// @Value("${GOOGLE_APPLICATION_CREDENTIALS}") // Use the environment variable you set
+	  //  private String credentialsPath;
 
 /*
     @Value("${cloud.aws.credentials.access-key}")
