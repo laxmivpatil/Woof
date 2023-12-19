@@ -2,6 +2,7 @@ package com.example.techverse.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,17 +15,21 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/pet-categories")
 public class PetController {
 
 
     @Autowired
     private PetService petService;
-
+    @GetMapping
+    public List<String> getAllPetCategories() {
+        return petService.getAllPetCategories();
+    }
     @GetMapping("/pets")
     public List<PetInfoDTO> getPetsInfoByCategory(@RequestParam String petCategory) {
         return petService.getPetsByCategory(petCategory);
     }
-    @GetMapping("/petsbyId")
+    @GetMapping("/pets/byId")
     public PetInfoDTO getPetInfoById(@RequestParam Long petId) {
         return petService.getPetInfoById(petId);
     }

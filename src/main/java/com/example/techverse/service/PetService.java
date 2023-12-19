@@ -20,7 +20,13 @@ public class PetService {
 
 	 @Autowired
 	    private PetRepository petRepository;
-
+	 public List<String> getAllPetCategories() {
+	        List<Pet> pets = petRepository.findAll();
+	        return pets.stream()
+	                .map(Pet::getPetCategory)
+	                .distinct()
+	                .collect(Collectors.toList());
+	    }
 	    public List<PetInfoDTO> getPetsByCategory(String petCategory) {
 	        List<Pet> pets = petRepository.findByPetCategory(petCategory);
 	        return pets.stream()
