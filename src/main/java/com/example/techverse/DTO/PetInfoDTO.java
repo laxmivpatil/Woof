@@ -3,8 +3,8 @@ package com.example.techverse.DTO;
 public class PetInfoDTO {
     private Long id;
     private String petName;
-    private String gender;
-    private String description;
+    private String gender="";
+    private String description="";
 
     // Constructors, getters, and setters
 

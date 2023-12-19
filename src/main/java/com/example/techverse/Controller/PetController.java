@@ -1,5 +1,7 @@
 package com.example.techverse.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,8 +34,13 @@ public class PetController {
         return response;
     }
     @GetMapping("/pets")
-    public List<PetInfoDTO> getPetsInfoByCategory(@RequestParam String petCategory) {
-        return petService.getPetsByCategory(petCategory);
+    public Map<String, Object> getPetsInfoByCategory(@RequestParam String petCategory) {
+    	  Map<String, Object> response = new HashMap<>();
+          
+    	List<PetInfoDTO> petInfoList = petService.getPetsByCategory(petCategory);
+        response.put("pet Info ", petInfoList);
+
+        return response;
     }
     @GetMapping("/pets/byId")
     public PetInfoDTO getPetInfoById(@RequestParam Long petId) {
