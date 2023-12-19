@@ -11,6 +11,7 @@ import com.example.techverse.Model.MonthlyDetails;
 import com.example.techverse.Model.Pet;
 import com.example.techverse.service.PetService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +23,13 @@ public class PetController {
     @Autowired
     private PetService petService;
     @GetMapping
-    public List<String> getAllPetCategories() {
-        return petService.getAllPetCategories();
+    public Map<String, Object> getAllPetCategories() {
+        Map<String, Object> response = new HashMap<>();
+        List<String> petCategories = petService.getAllPetCategories();
+
+        response.put("categories", petCategories);
+
+        return response;
     }
     @GetMapping("/pets")
     public List<PetInfoDTO> getPetsInfoByCategory(@RequestParam String petCategory) {
