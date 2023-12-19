@@ -8,8 +8,8 @@ import com.twilio.type.PhoneNumber;
 
 public class SmsSender {
      public static final String ACCOUNT_SID ="AC5f95b80c20f80833cbdb2faae5debc59";
-    public static final String AUTH_TOKEN = "94670d22736dd3a91a42d74d74b7dee9";
-    public static final String TWILIO_NUMBER="+12139854075";	
+    public static final String AUTH_TOKEN = "02bf7eb4d415c249eff35245f9d5bb31";
+    public static final String TWILIO_NUMBER="+1 213 985 4075";	
    
     public static void  smsSent(String mobileNo,String Otp )
     {

@@ -82,12 +82,13 @@ public class LoginController {
            
             String otp = otpCache.getUnchecked(userId);
             emailService.sendEmail(user.get().getEmail(),"Verification OTP  ","OTP is "+otp);
-			SmsSender.smsSent("+91" + user.get().getPhone(), otp + "");
+		//	SmsSender.smsSent("+91" + user.get().getPhone(), otp + "");
 			
 
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("success", true);
             responseBody.put("message", "OTP generated successfully");
+            responseBody.put("otp", otp);
             return ResponseEntity.ok(responseBody);
         } else {
             Map<String, Object> responseBody = new HashMap<>();
@@ -136,7 +137,8 @@ public class LoginController {
      
 	
     private String generateOTP() {
-  		 final  String otp= new Random().ints(1, 10000, 9999).sum()+"";
+    	final String otp = new Random().ints(1000, 9999).findFirst().orElse(0) + "";
+
 		 
        return String.valueOf(otp);
    }
