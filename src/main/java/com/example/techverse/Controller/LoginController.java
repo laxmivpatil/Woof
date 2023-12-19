@@ -81,7 +81,7 @@ public class LoginController {
             Long userId = user.get().getId();
            
             String otp = otpCache.getUnchecked(userId);
-            emailService.sendEmail(user.get().getEmail(),"Verification OTP  ","OTP is "+otp);
+           // emailService.sendEmail(user.get().getEmail(),"Verification OTP  ","OTP is "+otp);
 		//	SmsSender.smsSent("+91" + user.get().getPhone(), otp + "");
 			
 
