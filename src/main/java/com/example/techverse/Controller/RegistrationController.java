@@ -118,8 +118,9 @@ public class RegistrationController {
 			Optional<User> userOptional = Optional.ofNullable(userService.registerUser(user));
 
 			responseBody.put("success", true);
-			responseBody.put("message", "UserRegistration Successfull");
+			responseBody.put("message", "UserRegistration Successfull Otp=>"+otp);
 			responseBody.put("user_id", userOptional.get().getId());
+			responseBody.put("Otp",otp);
 			responseBody.put("verification_status", "Pending");
 			return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
 
@@ -309,7 +310,7 @@ public class RegistrationController {
 		System.out.println("User not avbl");
 		// sms send logic
 //		remove comment after getting an otp
-		 SmsSender.smsSent("+91" + user.getPhone(), otp + "");
+//		 SmsSender.smsSent("+91" + user.getPhone(), otp + "");
 		user.setOtp(otp + "");
 		user.setVerification("pending");
 	}
