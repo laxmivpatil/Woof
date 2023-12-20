@@ -47,18 +47,19 @@ public class PetService {
 	        }
 	    }
 	    
-	    public List<Map<String, String>> getMonthlyDetailsByPetIdAndMonth(Long petId, String month1) {
+	    public Map<String, String> getMonthlyDetailsByPetIdAndMonth(Long petId, String month) {
 	        Pet pet = petRepository.findById(petId).orElse(null);
-	       
-	        String month=String.valueOf(Double.parseDouble(month1));
+	        String monthStr = String.valueOf(Double.parseDouble(month));
+	        
 	        if (pet != null) {
 	            return pet.getMonthlyDetails().stream()
-	                    .filter(details -> month.trim().equalsIgnoreCase(details.getMonth().trim()))
+	                    .filter(details -> monthStr.trim().equalsIgnoreCase(details.getMonth().trim()))
+	                    .findFirst()
 	                    .map(this::convertToMap)
-	                    .collect(Collectors.toList());
+	                    .orElse(Collections.emptyMap());
 	        } else {
 	            // Handle the case when the pet with the given ID is not found
-	            return Collections.emptyList();
+	            return Collections.emptyMap();
 	        }
 	    }
 

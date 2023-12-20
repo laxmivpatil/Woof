@@ -47,9 +47,10 @@ public class PetController {
         return petService.getPetInfoById(petId);
     }
     @GetMapping("/pets/monthly-details")
-    public List<Map<String, String>> getMonthlyDetailsByPetIdAndMonth(
-    		     		@RequestParam Long petId,
+    public Map<String, String> getMonthlyDetailsByPetIdAndMonthJson(
+            @RequestParam Long petId,
             @RequestParam String month) {
         return petService.getMonthlyDetailsByPetIdAndMonth(petId, month);
     }
+
 }
