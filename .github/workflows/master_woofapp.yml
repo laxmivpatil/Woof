@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/Woof-Project.jar' 
+          path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
     runs-on: windows-latest
@@ -36,19 +36,18 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: java-app
-          path: '${{ github.workspace }}/target'
-      
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'woofapp'
           slot-name: 'Production'
-          package: '${{ github.workspace }}/target/Woof-Project.jar' 
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_74A7D784860D40B78B0A339A86D6AA39 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D20EC49303384F1FAEE9910D5B951447 }}
+          package: 'YourApplicationName.jar'
