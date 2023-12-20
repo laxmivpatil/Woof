@@ -50,4 +50,4 @@ jobs:
           app-name: 'woofapp'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D20EC49303384F1FAEE9910D5B951447 }}
-          package: '*.jar'
+          package: 'YourApplicationName.jar'
