@@ -237,7 +237,7 @@
 			</plugin>
 		</plugins>
 		
-		<finalName>Woof-Project</finalName>
+		<finalName>YourApplicationName</finalName>
 	</build>
 
 </project>

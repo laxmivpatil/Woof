@@ -81,13 +81,13 @@ public class ForgetPasswordController {
         if (!user.isEmpty()) {
             Long userId = user.get().getId();
             String otp = otpCache.getUnchecked(userId);
-            emailService.sendEmail(user.get().getEmail(),"Verification OTP  ","OTP is "+otp);
-			SmsSender.smsSent("+91" + user.get().getPhone(), otp + "");
+            //emailService.sendEmail(user.get().getEmail(),"Verification OTP  ","OTP is "+otp);
+			//SmsSender.smsSent("+91" + user.get().getPhone(), otp + "");
 			
 
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("success", true);
-            responseBody.put("message", "OTP generated successfully");
+            responseBody.put("message", "OTP generated successfully "+otp);
             return ResponseEntity.ok(responseBody);
         } else {
             Map<String, Object> responseBody = new HashMap<>();
