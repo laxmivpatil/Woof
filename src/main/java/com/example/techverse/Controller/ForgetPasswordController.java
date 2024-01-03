@@ -178,11 +178,13 @@ public class ForgetPasswordController {
         }
     }
 
-         private String generateOTP() {
-    	  final  String otp= new Random().ints(1, 100000, 999999).sum()+"";
-		 
-        return String.valueOf(otp);
-    }
+    private String generateOTP() {
+    	final String otp = new Random().ints(1000, 9999).findFirst().orElse(0) + "";
+       return String.valueOf(otp);
+   }
+    
+   
+    
     
     
  

@@ -180,11 +180,14 @@ public class ChangePasswordController {
         }
     }
     private String generateOTP() {
-     
-		 final  String otp= new Random().ints(1, 100000, 999999).sum()+"";
+    	final String otp = new Random().ints(1000, 9999).findFirst().orElse(0) + "";
+
 		 
-        return String.valueOf(otp);
-    }
+       return String.valueOf(otp);
+   }
+    
+   
+    
     
     
  
