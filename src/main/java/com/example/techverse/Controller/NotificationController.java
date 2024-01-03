@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.techverse.DTO.CreateNotificationRequest;
+import com.example.techverse.DTO.NotificationDTO;
 import com.example.techverse.DTO.UpdateNotificationSettingsRequest;
 import com.example.techverse.DTO.UserNotificationSettingsResponse;
 import com.example.techverse.Model.Notification;
@@ -46,13 +47,13 @@ public class NotificationController {
     public ResponseEntity<Map<String, Object>> getUserNotificationsall(@PathVariable("user_id") Long userId) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
-        List<String> notificationList=new ArrayList<>();
+        List<NotificationDTO> notificationList=new ArrayList<>();
 
         try {
             List<Notification> notifications = notificationService.getUserNotifications(userId);
             for(Notification n:notifications) {
-            	System.out.println(n.getMessage());
-            	notificationList.add(n.getMessage());
+            	
+            	notificationList.add( toDTO(n));
             	
             }
             response.put("notifications", notificationList);
@@ -69,7 +70,7 @@ public class NotificationController {
     public ResponseEntity<Map<String, Object>> getUserNotificationsunread(@PathVariable("user_id") Long userId) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
-        List<String> notificationList = new ArrayList<>();
+        List<NotificationDTO> notificationList = new ArrayList<>();
 
         try {
             List<Notification> notifications = notificationService.getUserNotifications(userId);
@@ -81,7 +82,8 @@ public class NotificationController {
             
             for (Notification n : unreadNotifications) {
                 System.out.println(n.getMessage());
-                notificationList.add(n.getMessage());
+                notificationList.add( toDTO(n));
+                 
             }
             
             response.put("notifications", notificationList);
@@ -227,6 +229,14 @@ public class NotificationController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+    
+    
+    
+    public NotificationDTO toDTO(Notification n)
+    {
+    	NotificationDTO nDTO=new NotificationDTO(n);
+    	return nDTO;
     }
 
 }
