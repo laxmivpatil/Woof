@@ -3,7 +3,9 @@ package com.example.techverse.Controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +51,28 @@ public class UserController {
 	 @Autowired
 	    private Storage storage; // Inject the Google Cloud Storage client
 
+	 @DeleteMapping("/delete")
+		public ResponseEntity<Map<String, Object>> deleteuser(@RequestParam(required = false) Long id)
+		{
+		 Map<String, Object> responseBody = new HashMap<>();
+	        
+			Optional<User> user=userRepository.findById(id);
+			if(user.isPresent())
+			{
+				userRepository.delete(user.get());
+				responseBody.put("success", true);
+	            responseBody.put("message", "User deleted");
+	            return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+			}
+			      responseBody.put("success", false);
+	            responseBody.put("message", "User not found");
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
+
+		}
+	 
+	 
+	 
+	 
 	@GetMapping("/profile")
 	public ResponseEntity<User> getUserProfile(@RequestParam(required = false) Long id)
 	{
