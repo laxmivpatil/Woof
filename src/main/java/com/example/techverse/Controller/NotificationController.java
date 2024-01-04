@@ -162,16 +162,30 @@ public class NotificationController {
     //get the notification settings of given user
     @GetMapping("/user/{userId}/settings")
     public ResponseEntity<?> getUserNotificationSettings(@PathVariable Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+       
+    	 Map<String, Object> response = new HashMap<>();
+         try {
+  
+    	Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            UserNotificationSettingsResponse response =
+            UserNotificationSettingsResponse response1 =
                 new UserNotificationSettingsResponse(user.getId(), user.getNotificationsEnabled());
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+            response.put("status", true);
+            response.put("resonse", response1);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+            } else {
+            	 response.put("status", false);
+                 response.put("message", "User not Found");
+                 return new ResponseEntity<>(response,HttpStatus.UNAUTHORIZED);
+            }
+             }
+             catch(Exception e){
+            	 response.put("status", false);
+                 response.put("message", "get Notification settings failed");
+                 return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+             }
     }
     
     //update notification setting true/false of given id
@@ -179,42 +193,77 @@ public class NotificationController {
     public ResponseEntity<?> updateUserNotificationSettings(
             @PathVariable Long userId,
             @RequestBody UpdateNotificationSettingsRequest request) {
-
+    	 Map<String, Object> response = new HashMap<>();
+         try {
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setNotificationsEnabled(request.getNotificationsEnabled());
             userRepository.save(user);
-            return ResponseEntity.ok("Notification settings updated successfully");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+           
+            response.put("status", true);
+            response.put("message", "Notification settings updated successfully");
+            return new ResponseEntity<>(response,HttpStatus.OK);
+            } else {
+            	 response.put("status", false);
+                 response.put("message", "User not Found");
+                 return new ResponseEntity<>(response,HttpStatus.UNAUTHORIZED);
+            }
+             }
+             catch(Exception e){
+            	 response.put("status", false);
+                 response.put("message", "Notification settings not updated successfully");
+                 return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+             }
     }
     //delete given notification of given user
     @DeleteMapping("/user/{userId}/notifications/{notificationId}")
-    public ResponseEntity<?> deleteSingleNotification(
+    public ResponseEntity<Map<String, Object>> deleteSingleNotification(
             @PathVariable Long userId,
             @PathVariable Long notificationId) {
+    	 Map<String, Object> response = new HashMap<>();
+         try {
         notificationService.deleteNotification(notificationId);
-        return ResponseEntity.ok("Notification deleted successfully");
+        response.put("status", true);
+        response.put("message", "notification Deleted Successfully");
+        return new ResponseEntity<>(response,HttpStatus.OK);
+         }
+         catch(Exception e){
+        	 response.put("status", false);
+             response.put("message", "notification Not Deleted Successfully");
+             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+         }
     }
 
     //delete notification of given userid
     @PostMapping("/user/{userId}/notifications/delete")
-    public ResponseEntity<?> deleteMultipleNotifications(
+    public ResponseEntity<Map<String, Object>> deleteMultipleNotifications(
             @PathVariable Long userId,
             @RequestBody List<Long> notificationIds) {
+    	
+    	Map<String, Object> response = new HashMap<>();
+        try {
         notificationService.deleteMultipleNotifications(notificationIds);
-        return ResponseEntity.ok("Notifications deleted successfully");
+        
+        response.put("status", true);
+        response.put("message", "notifications Deleted Successfully");
+        return new ResponseEntity<>(response,HttpStatus.OK);
+         }
+         catch(Exception e){
+        	 response.put("status", false);
+             response.put("message", "notifications Not Deleted Successfully");
+             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+         }
     }
     
     
     //mark read all notification to provided userid
     @PatchMapping("/user/{userId}/notifications/read-all")
-    public ResponseEntity<?> markAllNotificationsAsRead(
+    public ResponseEntity<Map<String, Object>> markAllNotificationsAsRead(
             @PathVariable Long userId) {
-
+    	Map<String, Object> response = new HashMap<>();
+        try {
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {
@@ -225,10 +274,22 @@ public class NotificationController {
             }
 
             notificationRepository.saveAll(userNotifications);
-            return ResponseEntity.ok("All notifications marked as read successfully");
+            
+        
+        response.put("status", true);
+        response.put("message", "All notifications marked as read successfully");
+        return new ResponseEntity<>(response,HttpStatus.OK);
         } else {
-            return ResponseEntity.notFound().build();
+        	 response.put("status", false);
+             response.put("message", "User not Found");
+             return new ResponseEntity<>(response,HttpStatus.UNAUTHORIZED);
         }
+         }
+         catch(Exception e){
+        	 response.put("status", false);
+             response.put("message", "notifications Not read Successfully");
+             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+         }
     }
     
     
