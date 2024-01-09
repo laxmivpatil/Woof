@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import com.example.techverse.Model.Product;
 import com.example.techverse.service.ProductService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -21,8 +23,13 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public Map<String, List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+
+        Map<String, List<Product>> response = new HashMap<>();
+        response.put("products", products);
+
+        return response;
     }
 
     @GetMapping("/{id}")
@@ -31,8 +38,13 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<Product> searchProducts(@RequestParam String keyword) {
-        return productService.searchProducts(keyword);
+    public Map<String, List<Product>> searchProducts(@RequestParam String keyword) {
+    	 List<Product> products= productService.searchProducts(keyword);
+        
+        Map<String, List<Product>> response = new HashMap<>();
+        response.put("products", products);
+
+        return response;
     }
 
     @PostMapping
