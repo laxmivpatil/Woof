@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByToken(String accessToken);
     
     @Query("SELECT u.followers FROM User u WHERE u.id = :userId")
-    List<User> findFollowersByUserId(Long userId);
+    List<User> findFollowersByUserId(@Param("userId") Long userId);
     
     
     

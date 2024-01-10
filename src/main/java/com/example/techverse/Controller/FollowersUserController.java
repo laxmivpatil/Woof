@@ -1,7 +1,9 @@
 package com.example.techverse.Controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,7 +67,7 @@ public class FollowersUserController {
 	        }
 	    }
 	    @GetMapping("/{user_id}/followers")
-	    public ResponseEntity<List<FollowerResponse>> getFollowersByUserId(@PathVariable("user_id") Long userId) {
+	    public ResponseEntity<Map<String, List<FollowerResponse>>> getFollowersByUserId(@PathVariable("user_id") Long userId) {
 	        List<User> followers = userService.getFollowersByUserId(userId);
 
 	        if (followers == null) {
@@ -77,7 +79,11 @@ public class FollowersUserController {
 	            followerResponses.add(new FollowerResponse(follower.getId(), follower.getEmail()));
 	        }
 
-	        return ResponseEntity.ok(followerResponses);
+	        Map<String, List<FollowerResponse>> response = new HashMap<>();
+	        response.put("followers", followerResponses);
+
+	        return ResponseEntity.ok(response);
 	    }
+
 }
 

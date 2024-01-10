@@ -69,7 +69,12 @@ public class ProductController {
     }
     
     @GetMapping("/byPetCategory")
-    public List<Product> getProductsByPetCategory(@RequestParam String petCategory) {
-        return productService.getProductsByPetCategory(petCategory);
+    public Map<String, List<Product>> getProductsByPetCategory(@RequestParam String petCategory) {
+    	List<Product> products=  productService.getProductsByPetCategory(petCategory);
+        
+        Map<String, List<Product>> response = new HashMap<>();
+        response.put("products", products);
+
+        return response;
     }
 }
