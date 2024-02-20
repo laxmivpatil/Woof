@@ -13,20 +13,35 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
+import com.azure.storage.blob.BlobClientBuilder;
+import com.azure.storage.blob.sas.BlobSasPermission;
+import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.example.techverse.Repository.UserRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Service
 @Slf4j
 public class StorageService {
 
-	@Autowired
-	UserRepository userRepository;
-	
+ 
+
+	 
+	 @Value("${azure.storage.account-name}")
+	    private String storageAccountName;
+
+	    @Value("${azure.storage.container-string}")
+	    private String container_string;
+
+	    @Value("${azure.storage.container-name}")
+	    private String containerName;
    /* @Value("${application.bucket.name}")
     private String bucketName;
 
@@ -112,7 +127,6 @@ public class StorageService {
 	 
 	 
 	 //cloud
-	 
-	 
+	  
 
 }

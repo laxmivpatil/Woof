@@ -1,8 +1,11 @@
 package com.example.techverse.service;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook; 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.example.techverse.Model.MonthlyDetails;
 import com.example.techverse.Model.Pet;
@@ -11,11 +14,22 @@ import com.example.techverse.Repository.PetRepository;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Iterator;
+import java.io.IOException; 
+import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
- 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @Service
 public class ExcelReaderService {
+
+	int i=0;
+	
+	  @Autowired
+	    private AzureStorageService azureStorageService;
 
     private final PetRepository petRepository;
     private final MonthlyDetailsRepository monthlyDetailsRepository;
@@ -42,7 +56,7 @@ public class ExcelReaderService {
                  
                 Pet pet = createPetFromRow(row);
                 
-                petRepository.save(pet);
+                 petRepository.save(pet);
                 for (int cellInde = 0; cellInde <=7; cellInde++) {			
                 createMonthlyDetailsFromRow(row, pet);
                // if(rowIterator.hasNext()) {
@@ -61,21 +75,27 @@ public class ExcelReaderService {
 
     private Pet createPetFromRow(Row row) {
         Pet pet = new Pet();
+        System.out.println(i++);
           pet.setPetName(row.getCell(1).getStringCellValue());
           pet.setPetCategory(row.getCell(2).getStringCellValue());
           pet.setGender(row.getCell(3).getStringCellValue());
-        pet.setDescription(row.getCell(4).getStringCellValue());
+        pet.setImg1(azureStorageService.uploadImgOnAzure(new File(row.getCell(4).getStringCellValue())));
+        pet.setImg2(azureStorageService.uploadImgOnAzure(new File(row.getCell(5).getStringCellValue())));
+        pet.setImg3(azureStorageService.uploadImgOnAzure(new File(row.getCell(6).getStringCellValue())));
+        pet.setDescription(row.getCell(7).getStringCellValue());
+        
+        
         // Map other fields
-
+ 
         return pet;
     }
 
-  
+    
     
       private void createMonthlyDetailsFromRow(Row row, Pet pet) {
     	  
         MonthlyDetails monthlyDetails = new MonthlyDetails();
-        int cellIndex=5;
+        int cellIndex=8;
         monthlyDetails.setMonth(String.valueOf(row.getCell(cellIndex).getNumericCellValue()));
         monthlyDetails.setFood(row.getCell(cellIndex + 1).getStringCellValue());
         monthlyDetails.setExercise(row.getCell(cellIndex + 2).getStringCellValue());

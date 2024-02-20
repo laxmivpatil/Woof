@@ -30,7 +30,7 @@ public class PetService {
 	    public List<PetInfoDTO> getPetsByCategory(String petCategory) {
 	        List<Pet> pets = petRepository.findByPetCategory(petCategory);
 	        return pets.stream()
-	                .map(pet -> new PetInfoDTO(pet.getId(), pet.getPetName()))
+	                .map(pet -> new PetInfoDTO(pet.getId(), pet.getPetName(),pet.getImg1(),pet.getImg2(),pet.getImg3()))
 	                .collect(Collectors.toList());
 	    }
 	    
@@ -40,7 +40,7 @@ public class PetService {
 	        Optional<Pet> optionalPet = petRepository.findById(petId);
 	        if (optionalPet.isPresent()) {
 	            Pet pet = optionalPet.get();
-	            return new PetInfoDTO(pet.getId(), pet.getPetName(), pet.getGender(), pet.getDescription());
+	            return new PetInfoDTO(pet.getId(), pet.getPetName(), pet.getGender(), pet.getDescription(),pet.getImg1(),pet.getImg2(),pet.getImg3());
 	        } else {
 	            // Handle the case when the pet with the given ID is not found
 	            return null;

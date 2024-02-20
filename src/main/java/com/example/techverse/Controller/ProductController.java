@@ -53,10 +53,15 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    public Map<String, Product>  updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    	 Map<String, Product> response = new HashMap<>();
+         
+    	
         if (productService.getProductById(id).isPresent()) {
             product.setId(id);
-            return productService.saveProduct(product);
+          Product p= productService.saveProduct(product);
+          response.put("products", p);
+          return response;
         } else {
             // Handle error, product not found
             return null;

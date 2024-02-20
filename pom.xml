@@ -20,7 +20,28 @@
 	
 	
 	<dependencies>
-		
+		<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-web</artifactId>
+    <version>5.3.28</version> <!-- Use the version compatible with your Spring Boot version -->
+</dependency>
+
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.4</version> <!-- Use the latest version available -->
+</dependency>
+			 <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-test</artifactId>
+    <version>5.3.28</version> <!-- Use the version compatible with your Spring Boot version -->
+    <scope>test</scope>
+</dependency>
+	<dependency>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-storage-blob</artifactId>
+    <version>12.15.0</version> <!-- Use the latest version -->
+</dependency>
 		  <!-- Apache POI -->
     <dependency>
         <groupId>org.apache.poi</groupId>

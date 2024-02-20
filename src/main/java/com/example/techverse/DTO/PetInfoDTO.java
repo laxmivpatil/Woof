@@ -5,17 +5,30 @@ public class PetInfoDTO {
     private String petName;
     private String gender="";
     private String description="";
+    private String img1="";
+    private String img2="";
+    private String img3="";
+    
 
     // Constructors, getters, and setters
 
     // Constructors
-    public PetInfoDTO(Long id, String petName, String gender, String description) {
+    public PetInfoDTO(Long id, String petName, String gender, String description,String img1,String img2,String img3) {
         this.id = id;
         this.petName = petName;
         this.gender = gender;
         this.description = description;
+        this.img1=img1;
+        this.img2=img2;
+        this.img3=img3;
     }
-
+    public PetInfoDTO(Long id, String petName,String img1,String img2,String img3) {
+        this.id = id;
+        this.petName = petName;
+        this.img1=img1;
+        this.img2=img2;
+        this.img3=img3;
+    }
     // Constructors, getters, and setters
 
     // Constructors
@@ -54,6 +67,30 @@ public class PetInfoDTO {
 
 	public void setPetName(String petName) {
 		this.petName = petName;
+	}
+
+	public String getImg1() {
+		return img1;
+	}
+
+	public void setImg1(String img1) {
+		this.img1 = img1;
+	}
+
+	public String getImg2() {
+		return img2;
+	}
+
+	public void setImg2(String img2) {
+		this.img2 = img2;
+	}
+
+	public String getImg3() {
+		return img3;
+	}
+
+	public void setImg3(String img3) {
+		this.img3 = img3;
 	}
 
     // Getters and setters
