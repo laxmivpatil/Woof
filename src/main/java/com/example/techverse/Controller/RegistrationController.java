@@ -202,22 +202,29 @@ public class RegistrationController {
 		}
 
 	}
-*/
+*/ 
 	@PostMapping("/register")
-	public ResponseEntity<Map<String, Object>> signUpUser(@RequestParam String email,String phone ,String password,String fullname,String confirmPassword,String role) {
+	public ResponseEntity<Map<String, Object>> signUpUser(
+	        @RequestParam(required = false) String email,
+	        @RequestParam(required = false) String phone,
+	        @RequestParam String password,
+	        @RequestParam String fullname,
+	        @RequestParam String confirmPassword,
+	        @RequestParam String role) {
 		Map<String, Object> responseBody = new HashMap<String, Object>();
 		try {
 			// Validate the Request Body
 			Long entity_id=0L;
 			String token="";
 			 
-			 validateRegistrationRequest(email,phone,password,fullname,confirmPassword);
+			// validateRegistrationRequest(email,phone,password,fullname,confirmPassword);
 			 if(role.equals("User")) {
-				User user = userService.registerUser(email,phone,password,fullname,role);
+				  System.out.println(email);
+				  User user = userService.registerUser(email,phone,password,fullname,role);
 				entity_id=user.getId();
 				user=userService.generateAndSaveToken1(user);
 				token=user.getToken();
-
+			 
 			 }
 			 else if (role.equals("Veterinarian")) {
 				 Veterinarian veterinarian = veterinarianService.registerVeterinarian(email,phone,password,fullname,role);
@@ -238,6 +245,7 @@ public class RegistrationController {
 			 responseBody.put("entity_id", entity_id);
 			responseBody.put("role",role);
 			responseBody.put("token",token);
+			
 			 return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
 
 		} catch (UserAlreadyExistsException e) {
@@ -318,6 +326,7 @@ public class RegistrationController {
 	public ResponseEntity<Map<String, Object>> userupdate(@RequestHeader("Authorization") String authorizationHeader,
 			@RequestPart("fullName") String fullName,
 			@RequestPart("phoneNumber") String phoneNumber,
+			@RequestPart("email") String email,
 			@RequestPart("age") String age,
 			@RequestPart("gender") String gender,
 			@RequestPart("profile") MultipartFile profile){
@@ -341,6 +350,7 @@ public class RegistrationController {
 			user.get().setPhone(phoneNumber);
 			user.get().setAge(Long.parseLong(age));
 			user.get().setGender(gender);
+			user.get().setEmail(email);
 			if(profile!=null && !profile.isEmpty())
 			{
 				String p=storageService.uploadFileOnAzure(profile);
@@ -370,6 +380,7 @@ public class RegistrationController {
 			@RequestPart("ngoName") String ngoName,
 			@RequestPart("address") String address,
 			@RequestPart("phoneNumber") String phoneNumber,
+			@RequestPart("email") String email,
 			@RequestPart("ngodate") String ngodate,
 			@RequestPart("ngoCertificate") MultipartFile ngoCertificate,
 			@RequestPart("ngoProfile") MultipartFile ngoProfile
@@ -392,6 +403,7 @@ public class RegistrationController {
 			ngo.get().setPhone(phoneNumber);
 			ngo.get().setNGODate(ngodate);
 			ngo.get().setAddress(address);
+			ngo.get().setEmail(email);
 			if(ngoProfile!=null && !ngoProfile.isEmpty())
 			{
 				String p=storageService.uploadFileOnAzure(ngoProfile);
@@ -426,6 +438,7 @@ public class RegistrationController {
 			@RequestPart("fullName") String fullName,
 			@RequestPart("address") String address,
 			@RequestPart("phoneNumber") String phoneNumber,
+			@RequestPart("email") String email,
 			@RequestPart("age") String age,
 			@RequestPart("experience") String experience,
 			@RequestPart("gender") String gender,
@@ -447,6 +460,7 @@ public class RegistrationController {
 			veterinarian.get().setFullName(fullName);
 			veterinarian.get().setVerification("Verified");
 			veterinarian.get().setPhone(phoneNumber);
+			veterinarian.get().setEmail(email);
 			veterinarian.get().setAge(Long.parseLong(age));
 			veterinarian.get().setGender(gender);
 			veterinarian.get().setExperience(Long.parseLong(experience));
