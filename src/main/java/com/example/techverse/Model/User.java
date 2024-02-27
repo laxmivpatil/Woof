@@ -22,9 +22,8 @@ import javax.persistence.OneToMany;
 @Table
 @Entity
  public class User  {
-	
-	 @Id
-	 @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	 private Long id;
      
 	  @ElementCollection
@@ -35,6 +34,7 @@ import javax.persistence.OneToMany;
 
 	    // Getters and setters for other fields
 
+	  private String profile;
 	private String role;
 	
     private String email;
@@ -42,12 +42,13 @@ import javax.persistence.OneToMany;
     @Column(nullable = false,name="password")
     private String password;
   
-    private String dob;
+    private Long age;
     private String phone;
     
     private String fullName;
  
     private String accountStatus; 
+    private String gender; 
      
 	@Column(name = "otp")
     private String otp;
@@ -58,11 +59,32 @@ import javax.persistence.OneToMany;
     @Column(name="token")
     private String token;
 
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", email=" + email + ", password=" + password + ", phone=" + phone + ", fullName="
 				+ fullName + ", accountStatus=" + accountStatus + ", otp=" + otp + ", verification=" + verification
 				+ ", token=" + token + "]";
+	}
+
+	public String getProfile() {
+		return profile;
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 	public Long getId() {
@@ -143,12 +165,14 @@ import javax.persistence.OneToMany;
 		this.token = token;
 	}
 
-	public String getDob() {
-		return dob;
+ 
+
+	public Long getAge() {
+		return age;
 	}
 
-	public void setDob(String dob) {
-		this.dob = dob;
+	public void setAge(Long age) {
+		this.age = age;
 	}
 
 	public String getRole() {
@@ -341,7 +365,13 @@ import javax.persistence.OneToMany;
 			this.longitude = longitude;
 		} 
 	    
-	    
+public User(String email,String phone,String password,String fullname,String role)	{
+	this.email=email;
+	this.phone=phone;
+	this.password=password;
+	this.fullName=fullname;
+	this.role=role;
+}
 	    
 	    
 

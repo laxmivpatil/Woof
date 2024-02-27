@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.User;
 
 @Repository
@@ -25,6 +26,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.followers FROM User u WHERE u.id = :userId")
     List<User> findFollowersByUserId(@Param("userId") Long userId);
     
+    
+    @Query("SELECT u FROM User u WHERE u.phone = :value OR u.email = :value")
+    Optional<User> findByPhoneOrEmail(@Param("value") String phoneNumberOrEmail);
     
     
     @Query("SELECT u FROM User u " +

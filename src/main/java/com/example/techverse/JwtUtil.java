@@ -36,7 +36,7 @@ public class JwtUtil {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
-
+        System.out.println(claims.getSubject());
         return claims.getSubject();
     }
 

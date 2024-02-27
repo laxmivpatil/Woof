@@ -45,11 +45,13 @@ public class LoginController {
 
     @Autowired
     public LoginController() {
+    	System.out.println("gffffffffffffh");
          otpCache = CacheBuilder.newBuilder()
                 .expireAfterWrite(1, TimeUnit.MINUTES)
                 .build(new CacheLoader<Long, String>() {
                     @Override
                     public String load(Long key) {
+                    System.out.println(key);
                         return generateOTP();
                     }
                 });
@@ -71,7 +73,7 @@ public class LoginController {
 	
     @GetMapping("/loginbyotp/getotp")
     public ResponseEntity<Map<String, Object>> generateOtp(@RequestParam String emailorphone) {
-    	System.out.println("otp==>"+otpCache);
+    	System.out.println("otp==>"+otpCache.toString());
         Optional<User> user = Optional.empty();
         if (emailorphone != null && !emailorphone.isEmpty()) {
             user = userRepository.findByEmailOrPhone(emailorphone,emailorphone);
@@ -79,7 +81,7 @@ public class LoginController {
 
         if (!user.isEmpty()) {
             Long userId = user.get().getId();
-           
+          
             String otp = otpCache.getUnchecked(userId);
            // emailService.sendEmail(user.get().getEmail(),"Verification OTP  ","OTP is "+otp);
 		//	SmsSender.smsSent("+91" + user.get().getPhone(), otp + "");

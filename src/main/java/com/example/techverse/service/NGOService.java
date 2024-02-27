@@ -1,7 +1,6 @@
 package com.example.techverse.service;
 
- 
- 
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -24,39 +23,41 @@ import org.springframework.stereotype.Service;
 import com.example.techverse.EmailSender;
 import com.example.techverse.JwtUtil;
 import com.example.techverse.SmsSender;
+import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.User;
+import com.example.techverse.Repository.NGORepository;
 import com.example.techverse.Repository.UserRepository;
 import com.example.techverse.exception.UserAlreadyExistsException;
- 
+
 
 @Service
-public class UserService{
+public class NGOService{
 	
 	
- 
+
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@Autowired
-    private JwtUtil jwtUtil;
+   private JwtUtil jwtUtil;
 	
 	private final EmailService emailService;
 
-	private final UserRepository userRepository;
+	private final NGORepository ngoRepository;
 
-	public UserService(UserRepository userRepository, EmailService emailService ) {
+	public NGOService(NGORepository ngoRepository, EmailService emailService ) {
 		this.emailService = emailService;
-		this.userRepository = userRepository;
+		this.ngoRepository = ngoRepository;
 		 
 	}
 	 
- 	 	
-	public User registerUser(String email,String phone,String password,String fullname,String role){
+	 	
+	public NGO registerNGO(String email,String phone,String password,String fullname,String role){
 
 		String hashedPassword =passwordEncoder.encode(password);
-		User user=new User(email,phone,hashedPassword,fullname,role);
-		List<String> lastThreePasswords = user.getLastThreePasswords();
+		NGO ngo=new NGO(email,phone,hashedPassword,fullname,role);
+		List<String> lastThreePasswords = ngo.getLastThreePasswords();
 				 if (lastThreePasswords == null) {
 				        lastThreePasswords = new ArrayList<>();
 				    }
@@ -65,39 +66,34 @@ public class UserService{
 				        lastThreePasswords.remove(0); // Remove the oldest password
 				    }
 
-				    user.setLastThreePasswords(lastThreePasswords);
-				 
-				
-				
-		
-		 
-		
-		return userRepository.save(user);
+				    ngo.setLastThreePasswords(lastThreePasswords);
+		 		
+		return ngoRepository.save(ngo);
 
 		 
 	}
-
-	 public Optional<User> generateAndSaveToken(Optional<User> userOptional){
-		 String token = jwtUtil.generateToken(userOptional.get().getEmail());
+ 
+	 public Optional<NGO> generateAndSaveToken(Optional<NGO> ngoOptional){
+		 String token = jwtUtil.generateToken(ngoOptional.get().getEmail());
 			System.out.println("token "+token);
 		
 			System.out.println("token extract "+jwtUtil.extractUsername(token));
-			userOptional.get().setToken(token);
-			userRepository.save(userOptional.get());
-			return userOptional;
+			ngoOptional.get().setToken(token);
+			ngoRepository.save(ngoOptional.get());
+			return ngoOptional;
 
 	 }
-	 public User generateAndSaveToken1(User user){
-		 String token = jwtUtil.generateToken(user.getEmail());
+	 public NGO generateAndSaveToken1( NGO  ngo ){
+		 String token = jwtUtil.generateToken(ngo.getEmail());
 			System.out.println("token "+token);
 		
 			System.out.println("token extract "+jwtUtil.extractUsername(token));
-			user.setToken(token);
-			userRepository.save(user);
-			return user;
+			ngo.setToken(token);
+			ngoRepository.save(ngo);
+			return ngo;
 
 	 }
-
+/*
 	 
 	 public ResponseEntity<Map<String, Object>> loginUserByPassword(Optional<User> userOptional,String password) {
 		Map<String, Object> responseBody = new HashMap<String, Object>();
@@ -125,7 +121,7 @@ public class UserService{
 		 
 		return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.UNAUTHORIZED);	
 
- 		
+		
 	}
 	 
 	 public List<User> getFollowersByUserId(Long userId) {
@@ -170,7 +166,7 @@ public class UserService{
 
 	        return true;
 	    }
-
+*/
 	 
 	
 	 

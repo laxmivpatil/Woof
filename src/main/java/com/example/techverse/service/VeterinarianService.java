@@ -1,62 +1,44 @@
 package com.example.techverse.service;
 
- 
- 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.techverse.EmailSender;
 import com.example.techverse.JwtUtil;
-import com.example.techverse.SmsSender;
-import com.example.techverse.Model.User;
-import com.example.techverse.Repository.UserRepository;
-import com.example.techverse.exception.UserAlreadyExistsException;
- 
+import com.example.techverse.Model.NGO;
+import com.example.techverse.Model.Veterinarian;
+import com.example.techverse.Repository.NGORepository;
+import com.example.techverse.Repository.VeterinarianRepository;
 
 @Service
-public class UserService{
-	
-	
- 
-	
+public class VeterinarianService {
+
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@Autowired
-    private JwtUtil jwtUtil;
+   private JwtUtil jwtUtil;
 	
 	private final EmailService emailService;
 
-	private final UserRepository userRepository;
+	private final VeterinarianRepository veterinarianRepository;
 
-	public UserService(UserRepository userRepository, EmailService emailService ) {
+	public VeterinarianService(VeterinarianRepository veterinarianRepository, EmailService emailService ) {
 		this.emailService = emailService;
-		this.userRepository = userRepository;
+		this.veterinarianRepository =veterinarianRepository;
 		 
 	}
 	 
- 	 	
-	public User registerUser(String email,String phone,String password,String fullname,String role){
+	 	
+	public Veterinarian registerVeterinarian(String email,String phone,String password,String fullname,String role){
 
 		String hashedPassword =passwordEncoder.encode(password);
-		User user=new User(email,phone,hashedPassword,fullname,role);
-		List<String> lastThreePasswords = user.getLastThreePasswords();
+		Veterinarian veterinarian=new Veterinarian(email,phone,hashedPassword,fullname,role);
+		List<String> lastThreePasswords = veterinarian.getLastThreePasswords();
 				 if (lastThreePasswords == null) {
 				        lastThreePasswords = new ArrayList<>();
 				    }
@@ -65,40 +47,36 @@ public class UserService{
 				        lastThreePasswords.remove(0); // Remove the oldest password
 				    }
 
-				    user.setLastThreePasswords(lastThreePasswords);
-				 
-				
-				
-		
-		 
-		
-		return userRepository.save(user);
+				    veterinarian.setLastThreePasswords(lastThreePasswords);
+				  
+		return veterinarianRepository.save(veterinarian);
 
 		 
 	}
-
-	 public Optional<User> generateAndSaveToken(Optional<User> userOptional){
-		 String token = jwtUtil.generateToken(userOptional.get().getEmail());
+ 
+	 public Optional<Veterinarian> generateAndSaveToken(Optional<Veterinarian>  veterinarianOptional){
+		 String token = jwtUtil.generateToken(veterinarianOptional.get().getEmail());
 			System.out.println("token "+token);
 		
 			System.out.println("token extract "+jwtUtil.extractUsername(token));
-			userOptional.get().setToken(token);
-			userRepository.save(userOptional.get());
-			return userOptional;
+			 veterinarianOptional.get().setToken(token);
+			 veterinarianRepository.save(veterinarianOptional.get());
+			return  veterinarianOptional;
 
 	 }
-	 public User generateAndSaveToken1(User user){
-		 String token = jwtUtil.generateToken(user.getEmail());
-			System.out.println("token "+token);
-		
-			System.out.println("token extract "+jwtUtil.extractUsername(token));
-			user.setToken(token);
-			userRepository.save(user);
-			return user;
-
-	 }
-
 	 
+	 public  Veterinarian generateAndSaveToken1( Veterinarian   veterinarian ){
+		 String token = jwtUtil.generateToken(veterinarian.getEmail());
+			System.out.println("token "+token);
+		
+			System.out.println("token extract "+jwtUtil.extractUsername(token));
+			 veterinarian.setToken(token);
+			 veterinarianRepository.save(veterinarian );
+			return  veterinarian;
+
+	 }
+
+	 /*
 	 public ResponseEntity<Map<String, Object>> loginUserByPassword(Optional<User> userOptional,String password) {
 		Map<String, Object> responseBody = new HashMap<String, Object>();
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -125,7 +103,7 @@ public class UserService{
 		 
 		return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.UNAUTHORIZED);	
 
- 		
+		
 	}
 	 
 	 public List<User> getFollowersByUserId(Long userId) {
@@ -170,10 +148,9 @@ public class UserService{
 
 	        return true;
 	    }
-
+*/
 	 
 	
 	 
 	
-	 
 }

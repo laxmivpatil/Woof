@@ -1,5 +1,6 @@
 package com.example.techverse.service;
 
+import java.time.LocalDateTime;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -11,27 +12,38 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.techverse.Model.OtpEntity;
+import com.example.techverse.Repository.OtpRepository;
 
 @Service
 public class EmailService {
 	
-	 
-	 private String senderEmail="laxmipatil070295@gmail.com";;
+
+	 @Autowired
+	    private OtpRepository otpRepository;
+	 @Autowired
+	    private PasswordEncoder passwordEncoder;
+	 private String senderEmail="laxmipatil070295@gmail.com";
 	
  
-     private String senderPassword= "thvluetwbpkkrfwg";;
+	 private String senderPassword= "mfaxitwotgaxhkst";
 	
 	 
-     private String host= "smtp.gmail.com";;
+     private String host= "smtp.gmail.com";
 	
 	 
      int port=587;
 	
-	public void sendEmail(String recipientEmail,int OTP)
+	public boolean sendEmail(String recipientEmail,String OTP)
 	{
-		Properties props = new Properties();
+		 OtpEntity otpEntity = new OtpEntity(recipientEmail, passwordEncoder.encode(OTP), LocalDateTime.now().plusMinutes(5));
+         otpRepository.save(otpEntity);
+          Properties props = new Properties();
         props.put("mail.smtp.host", host);
         props.put("mail.smtp.port", port);
         props.put("mail.smtp.auth", "true");
@@ -56,9 +68,11 @@ public class EmailService {
             Transport.send(message);
 
             System.out.println("Email sent successfully.");
+            return true;
 
         } catch (MessagingException e) {
             System.out.println("Error sending email: " + e.getMessage());
+            return false;
         }
     }
 	
