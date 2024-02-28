@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.techverse.JwtUtil;
 import com.example.techverse.SmsSender;
+import com.example.techverse.DTO.RegistrationDTO;
 import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.User;
 import com.example.techverse.Model.Veterinarian;
@@ -212,6 +213,7 @@ public class RegistrationController {
 	        @RequestParam String confirmPassword,
 	        @RequestParam String role) {
 		Map<String, Object> responseBody = new HashMap<String, Object>();
+		 RegistrationDTO  dto=new RegistrationDTO();
 		try {
 			// Validate the Request Body
 			Long entity_id=0L;
@@ -224,6 +226,7 @@ public class RegistrationController {
 				entity_id=user.getId();
 				user=userService.generateAndSaveToken1(user);
 				token=user.getToken();
+				responseBody.put("User", dto.toDTO(user));
 			 
 			 }
 			 else if (role.equals("Veterinarian")) {
@@ -231,6 +234,7 @@ public class RegistrationController {
 					entity_id=veterinarian.getId();
 					veterinarian = veterinarianService.generateAndSaveToken1(veterinarian);
 					token=veterinarian.getToken();
+					responseBody.put("Veterinarian", dto.toDTO(veterinarian));
 						
 			 }
 			 else if(role.equals("NGO")) {
@@ -238,11 +242,14 @@ public class RegistrationController {
 					entity_id=ngo.getId();
 					ngo = ngoService.generateAndSaveToken1(ngo);
 					token=ngo.getToken();
+					responseBody.put("NGO", dto.toDTO(ngo));
+					
 			 }		 
 		
 			
 			responseBody.put("success", true);
 			 responseBody.put("entity_id", entity_id);
+			 
 			responseBody.put("role",role);
 			responseBody.put("token",token);
 			
