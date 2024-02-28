@@ -41,7 +41,8 @@ import com.example.techverse.DTO.ResponseDTO;
 import com.example.techverse.service.EmailService;
 import com.example.techverse.service.OtpService;
  
- 
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("")
@@ -115,8 +116,8 @@ public class OtpController {
 
     /****final****/
     @PostMapping("/validateOtp")
-	public ResponseEntity<ResponseDTO<String>> validate(@org.springframework.web.bind.annotation.RequestBody Map<String, String> request) {
-	    ResponseDTO<String> response = new ResponseDTO<>();
+	public ResponseEntity<ResponseDTO<String>> validate(@RequestBody Map<String, String> request){
+	ResponseDTO<String> response = new ResponseDTO<>();
 	    response.setData("");
 	    String phoneNumber = request.get("phoneoremail");
 	    String otp = request.get("otp");
