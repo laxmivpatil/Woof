@@ -71,6 +71,7 @@ public class RegistrationDTO {
 
      public RegistrationDTO toDTO(User user) {
     	 
+    	 
     	 RegistrationDTO registrationDTO =new RegistrationDTO();
     	 registrationDTO.id=user.getId();
     	 registrationDTO.email=user.getEmail();

@@ -110,20 +110,33 @@ public class RegistrationController {
 			Map<String, Object> responseBody = new HashMap<String, Object>();
 			try {
 				// Validate the Request Body
-			 
-				Optional<User> user=userRepository.findByPhoneOrEmail(emailorphone);
+				RegistrationDTO  dto=new RegistrationDTO();
+				Optional<User> user=userRepository.findByEmailOrPhone(emailorphone,emailorphone);
 				Optional<Veterinarian> veterinarian=veterinarianRepository.findByPhoneOrEmail(emailorphone);
 				Optional<NGO> ngo=ngoRepository.findByPhoneOrEmail(emailorphone);
-				  
-				 if(user.isPresent()||veterinarian.isPresent()||ngo.isPresent())
-				 {
+				
+				if(user.isPresent())
+				{
 					 responseBody.put("success", false);
 					 responseBody.put("message", "This email or phone allready registered ");
-					 responseBody.put("User", user.get());
-					 responseBody.put("Veterinarian",veterinarian);
-					 responseBody.put("Ngo", ngo);
-						return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.CONFLICT);
-				 }
+				 responseBody.put("User", dto.toDTO(user.get()));
+				 		return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
+				}
+				if(veterinarian.isPresent())
+				{
+					 responseBody.put("success", false);
+					 responseBody.put("message", "This email or phone allready registered ");
+					  responseBody.put("Veterinarian",dto.toDTO(veterinarian.get()));
+					 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
+				}
+				if(ngo.isPresent())
+				{
+					 responseBody.put("success", false);
+					 responseBody.put("message", "This email or phone allready registered ");
+					  responseBody.put("Ngo", dto.toDTO(ngo.get()));
+						return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
+				}
+				 
 				 
 				responseBody.put("success", true);
 				responseBody.put("message", "new user");
@@ -133,7 +146,7 @@ public class RegistrationController {
 				 
 
 				responseBody.put("success", false);
-				responseBody.put("message", "An error Occured");
+				responseBody.put("message", "An error Occured"+e);
 				return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 
@@ -249,7 +262,6 @@ public class RegistrationController {
 			
 			responseBody.put("success", true);
 			 responseBody.put("entity_id", entity_id);
-			 
 			responseBody.put("role",role);
 			responseBody.put("token",token);
 			
