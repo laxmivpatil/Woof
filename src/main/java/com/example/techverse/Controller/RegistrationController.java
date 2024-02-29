@@ -119,7 +119,7 @@ public class RegistrationController {
 				{
 					 responseBody.put("success", false);
 					 responseBody.put("message", "This email or phone allready registered ");
-				 responseBody.put("User", dto.toDTO(user.get()));
+				 responseBody.put("User", dto.toDTO(user.get())); 
 				 		return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
 				}
 				if(veterinarian.isPresent())
