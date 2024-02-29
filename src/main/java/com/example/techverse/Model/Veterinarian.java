@@ -74,6 +74,11 @@ import javax.persistence.Table;
 	    private String veterinarianCertification;
 	    
 		 
+		public Veterinarian() {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+
 		public String getVeterinarianCertification() {
 			return veterinarianCertification;
 		}

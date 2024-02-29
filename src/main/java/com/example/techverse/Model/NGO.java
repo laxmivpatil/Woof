@@ -66,6 +66,11 @@ public class NGO {
     
     
     
+	public NGO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getNGOProfile() {
 		return NGOProfile;
 	}
