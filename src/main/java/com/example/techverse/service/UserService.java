@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import com.example.techverse.EmailSender;
 import com.example.techverse.JwtUtil;
 import com.example.techverse.SmsSender;
+import com.example.techverse.DTO.RegistrationDTO;
 import com.example.techverse.Model.User;
 import com.example.techverse.Repository.UserRepository;
 import com.example.techverse.exception.UserAlreadyExistsException;
@@ -129,7 +130,7 @@ public class UserService{
 	}*/
 	 public ResponseEntity<Map<String, Object>> loginUserByPassword(Optional<User> userOptional,String password) {
 			Map<String, Object> responseBody = new HashMap<String, Object>();
-			 
+			RegistrationDTO  dto=new RegistrationDTO();
 			boolean passwordMatches = passwordEncoder.matches(password,userOptional.get().getPassword());
 			 
 			 
@@ -138,7 +139,7 @@ public class UserService{
 				responseBody.put("success", true);
 				responseBody.put("message", "User Login Successfully");
 				responseBody.put("Token",userOptional.get().getToken());
-				responseBody.put("userId", userOptional.get().getId());
+				responseBody.put("user", dto.toDTO(userOptional.get()));
 			 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);	
 				 
 			}

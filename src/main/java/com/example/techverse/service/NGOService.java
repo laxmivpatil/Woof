@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.example.techverse.EmailSender;
 import com.example.techverse.JwtUtil;
 import com.example.techverse.SmsSender;
+import com.example.techverse.DTO.RegistrationDTO;
 import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.User;
 import com.example.techverse.Repository.NGORepository;
@@ -96,6 +97,7 @@ public class NGOService{
 	 
 	 public ResponseEntity<Map<String, Object>> loginNgoByPassword(Optional<NGO> ngoOptional,String password) {
 			Map<String, Object> responseBody = new HashMap<String, Object>();
+			RegistrationDTO  dto=new RegistrationDTO();
 			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 			boolean passwordMatches = encoder.matches(password,ngoOptional.get().getPassword());
 
@@ -104,7 +106,7 @@ public class NGOService{
 				responseBody.put("success", true);
 				responseBody.put("message", "NGO Login Successfully");
 				responseBody.put("Token",ngoOptional.get().getToken());
-				responseBody.put("ngoId",ngoOptional.get().getId());
+				responseBody.put("ngo",dto.toDTO(ngoOptional.get()) );
 			 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);	
 				 
 			}

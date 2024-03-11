@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.techverse.SmsSender;
+import com.example.techverse.DTO.RegistrationDTO;
 import com.example.techverse.DTO.UserBasicInfoDTO;
 import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.User;
@@ -97,6 +98,7 @@ public class LoginController {
     @PutMapping("/user/loginbypwd")
 	public ResponseEntity<Map<String, Object>> loginUserByPassword(@RequestParam String emailorphone,String password) {
 		Map<String, Object> responseBody = new HashMap<String, Object>();
+		
 		System.out.println(emailorphone);
 		Optional<User> user=userRepository.findByEmailOrPhone(emailorphone, emailorphone);
 		 

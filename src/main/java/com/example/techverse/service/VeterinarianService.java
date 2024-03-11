@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.techverse.JwtUtil;
+import com.example.techverse.DTO.RegistrationDTO;
 import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.Veterinarian;
 import com.example.techverse.Repository.NGORepository;
@@ -84,6 +85,7 @@ public class VeterinarianService {
 	 public ResponseEntity<Map<String, Object>> loginVeterinarianByPassword(Optional<Veterinarian> veterinarianOptional,String password) {
 			Map<String, Object> responseBody = new HashMap<String, Object>();
 			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+			RegistrationDTO  dto=new RegistrationDTO();
 			boolean passwordMatches = encoder.matches(password,veterinarianOptional.get().getPassword());
 
 			if(passwordMatches) {
@@ -91,7 +93,7 @@ public class VeterinarianService {
 				responseBody.put("success", true);
 				responseBody.put("message", "Veterinarian Login Successfully");
 				responseBody.put("Token",veterinarianOptional.get().getToken());
-				responseBody.put("veterinarianId",veterinarianOptional.get().getId());
+				responseBody.put("veterinarian",dto.toDTO(veterinarianOptional.get()));
 			 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);	
 				 
 			}
