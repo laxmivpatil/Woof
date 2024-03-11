@@ -119,21 +119,21 @@ public class RegistrationController {
 				{
 					 responseBody.put("success", false);
 					 responseBody.put("message", "This email or phone allready registered ");
-				 responseBody.put("User", dto.toDTO(user.get())); 
+				 responseBody.put("Users", dto.toDTO(user.get())); 
 				 		return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
 				}
 				if(veterinarian.isPresent())
 				{
 					 responseBody.put("success", false);
 					 responseBody.put("message", "This email or phone allready registered ");
-					  responseBody.put("Veterinarian",dto.toDTO(veterinarian.get()));
+					  responseBody.put("Users",dto.toDTO(veterinarian.get()));
 					 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
 				}
 				if(ngo.isPresent())
 				{
 					 responseBody.put("success", false);
 					 responseBody.put("message", "This email or phone allready registered ");
-					  responseBody.put("Ngo", dto.toDTO(ngo.get()));
+					  responseBody.put("Users", dto.toDTO(ngo.get()));
 						return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
 				}
 				 
@@ -151,6 +151,9 @@ public class RegistrationController {
 			}
 
 		}
+	 
+	 /// 1.checkuserbymobile  2generateotp-mobileno,  3. user/loginbyotp    mobileno ,otp  veterniarian/loginbyotp  ngo/loginbyotp
+	 	//											1. user/loginbypwd   email pwd
 /*	@PostMapping("/register")
 	public ResponseEntity<Map<String, Object>> signUpUser(@RequestParam String email,String phone ,String password,String fullname,String confirmPassword,String role) {
 		Map<String, Object> responseBody = new HashMap<String, Object>();
@@ -406,8 +409,7 @@ public class RegistrationController {
 			){
 			
 			Map<String, Object> responseBody = new HashMap<String, Object>();
-
-		System.out.println("Authentication");
+			System.out.println("Authentication");
 		try {
 			// Validate the Request Body
 			 	Optional<NGO> ngo=ngoRepository.findByToken(authorizationHeader.substring(7));
@@ -434,7 +436,6 @@ public class RegistrationController {
 				ngo.get().setNGOCertificate(p);
 			}
 			ngoRepository.save(ngo.get());
-
 			responseBody.put("success", true);
 			responseBody.put("message", "User Updated Successfull");
 			responseBody.put("user_id", ngo.get().getId());

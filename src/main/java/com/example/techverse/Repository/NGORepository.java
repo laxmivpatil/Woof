@@ -18,6 +18,10 @@ public interface NGORepository extends JpaRepository<NGO, Long> {
 
 	  Optional<NGO> findByToken(String accessToken);
 	  boolean existsByEmailOrPhone(String email, String phone);
+	  
+	  
+
+	    Optional<NGO> findByEmailOrPhone(String email,String phone);
 	   
 
 }

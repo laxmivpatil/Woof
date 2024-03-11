@@ -98,13 +98,13 @@ public class UserService{
 
 	 }
 
-	 
+/*	  with verified check
 	 public ResponseEntity<Map<String, Object>> loginUserByPassword(Optional<User> userOptional,String password) {
 		Map<String, Object> responseBody = new HashMap<String, Object>();
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		boolean passwordMatches = encoder.matches(password,userOptional.get().getPassword());
 
-		if( passwordMatches) {
+		if(passwordMatches) {
 			if(userOptional.get().getVerification().equals("Verified")) {
 				userOptional=generateAndSaveToken(userOptional);
 			responseBody.put("success", true);
@@ -126,7 +126,29 @@ public class UserService{
 		return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.UNAUTHORIZED);	
 
  		
-	}
+	}*/
+	 public ResponseEntity<Map<String, Object>> loginUserByPassword(Optional<User> userOptional,String password) {
+			Map<String, Object> responseBody = new HashMap<String, Object>();
+			 
+			boolean passwordMatches = passwordEncoder.matches(password,userOptional.get().getPassword());
+			 
+			 
+			if(passwordMatches) {
+				 	userOptional=generateAndSaveToken(userOptional);
+				responseBody.put("success", true);
+				responseBody.put("message", "User Login Successfully");
+				responseBody.put("Token",userOptional.get().getToken());
+				responseBody.put("userId", userOptional.get().getId());
+			 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);	
+				 
+			}
+			responseBody.put("success", false);
+			responseBody.put("message", "Invalid Password");
+			 
+			return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.UNAUTHORIZED);	
+
+	 		
+		}
 	 
 	 public List<User> getFollowersByUserId(Long userId) {
 	        // Implement the logic to retrieve followers by user ID using Spring Data JPA

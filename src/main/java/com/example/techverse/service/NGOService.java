@@ -93,6 +93,30 @@ public class NGOService{
 			return ngo;
 
 	 }
+	 
+	 public ResponseEntity<Map<String, Object>> loginNgoByPassword(Optional<NGO> ngoOptional,String password) {
+			Map<String, Object> responseBody = new HashMap<String, Object>();
+			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+			boolean passwordMatches = encoder.matches(password,ngoOptional.get().getPassword());
+
+			if(passwordMatches) {
+				 	ngoOptional=generateAndSaveToken(ngoOptional);
+				responseBody.put("success", true);
+				responseBody.put("message", "NGO Login Successfully");
+				responseBody.put("Token",ngoOptional.get().getToken());
+				responseBody.put("ngoId",ngoOptional.get().getId());
+			 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);	
+				 
+			}
+			responseBody.put("success", false);
+			responseBody.put("message", "Invalid Password");
+			 
+			return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.UNAUTHORIZED);	
+
+	 		
+		}
+	 
+	 
 /*
 	 
 	 public ResponseEntity<Map<String, Object>> loginUserByPassword(Optional<User> userOptional,String password) {

@@ -1,10 +1,14 @@
 package com.example.techverse.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +80,29 @@ public class VeterinarianService {
 
 	 }
 
+	 
+	 public ResponseEntity<Map<String, Object>> loginVeterinarianByPassword(Optional<Veterinarian> veterinarianOptional,String password) {
+			Map<String, Object> responseBody = new HashMap<String, Object>();
+			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+			boolean passwordMatches = encoder.matches(password,veterinarianOptional.get().getPassword());
+
+			if(passwordMatches) {
+				veterinarianOptional=generateAndSaveToken(veterinarianOptional);
+				responseBody.put("success", true);
+				responseBody.put("message", "Veterinarian Login Successfully");
+				responseBody.put("Token",veterinarianOptional.get().getToken());
+				responseBody.put("veterinarianId",veterinarianOptional.get().getId());
+			 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);	
+				 
+			}
+			responseBody.put("success", false);
+			responseBody.put("message", "Invalid Password");
+			 
+			return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.UNAUTHORIZED);	
+
+	 		
+		}
+	 
 	 /*
 	 public ResponseEntity<Map<String, Object>> loginUserByPassword(Optional<User> userOptional,String password) {
 		Map<String, Object> responseBody = new HashMap<String, Object>();

@@ -18,5 +18,8 @@ public interface VeterinarianRepository extends JpaRepository<Veterinarian, Long
 	  boolean existsByEmailOrPhone(String email, String phone);
 	  
 	  Optional<Veterinarian> findByToken(String accessToken);
+	  
+
+	    Optional<Veterinarian> findByEmailOrPhone(String email,String phone);
 	   
 }
