@@ -65,15 +65,7 @@ public class UserService{
 				    if (lastThreePasswords.size() > 3) {
 				        lastThreePasswords.remove(0); // Remove the oldest password
 				    }
-
-				    user.setLastThreePasswords(lastThreePasswords);
-				 
-				
-				
-		
-		 
-		
-		return userRepository.save(user);
+			return userRepository.save(user);
 
 		 
 	}
@@ -86,17 +78,15 @@ public class UserService{
 			userOptional.get().setToken(token);
 			userRepository.save(userOptional.get());
 			return userOptional;
-
 	 }
+	 
 	 public User generateAndSaveToken1(User user){
 		 String token = jwtUtil.generateToken(user.getEmail());
 			System.out.println("token "+token);
-		
 			System.out.println("token extract "+jwtUtil.extractUsername(token));
 			user.setToken(token);
 			userRepository.save(user);
 			return user;
-
 	 }
 
 /*	  with verified check

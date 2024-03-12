@@ -10,15 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.techverse.SmsSender;
+import com.example.techverse.DTO.OtpVerificationResult;
 import com.example.techverse.DTO.RegistrationDTO;
+import com.example.techverse.DTO.ResponseDTO;
 import com.example.techverse.DTO.UserBasicInfoDTO;
 import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.User;
@@ -28,6 +32,7 @@ import com.example.techverse.Repository.UserRepository;
 import com.example.techverse.Repository.VeterinarianRepository;
 import com.example.techverse.service.EmailService;
 import com.example.techverse.service.NGOService;
+import com.example.techverse.service.OtpService;
 import com.example.techverse.service.UserService;
 import com.example.techverse.service.VeterinarianService;
 import com.google.common.cache.CacheBuilder;
@@ -58,6 +63,9 @@ public class LoginController {
 	private NGOService ngoService;
 	@Autowired
 	private NGORepository ngoRepository;
+	 @Autowired
+	    private OtpService otpService;
+		
 	
     @Autowired
      EmailService emailService;
@@ -78,7 +86,7 @@ public class LoginController {
     }
 
     
-    @PutMapping("/user/bytoken")
+    @GetMapping("/user/bytoken")
    	public ResponseEntity<Map<String, Object>> getuserbytoken(@RequestHeader String authorization) {
    		Map<String, Object> responseBody = new HashMap<String, Object>();
     	Optional<User> user=userRepository.findByToken(authorization.substring(7));
@@ -86,13 +94,13 @@ public class LoginController {
    		 if(user.isEmpty()) {
    		responseBody.put("success", false);
    		responseBody.put("message", "User with specified token not available");
-   			return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.NOT_FOUND);
+   			return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
    		 }
    		 
    		responseBody.put("success", true);
    		responseBody.put("User", new UserBasicInfoDTO(user.get()));
    		
-   		return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.NOT_FOUND);
+   		return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
    	}
     
     @PutMapping("/user/loginbypwd")
@@ -137,42 +145,124 @@ public class LoginController {
 		 return ngoService.loginNgoByPassword(ngo,password);
 	}
     
-    @PostMapping("/loginbyotp/final")
-    public ResponseEntity<Map<String, Object>> loginbyOtp( @RequestParam(required = false) String emailorphone, @RequestParam String otp) {
-        Optional<User> user = Optional.empty();
-       if(emailorphone != null && !emailorphone.isEmpty()) {
-            user = userRepository.findByEmailOrPhone(emailorphone,emailorphone);
-        }
+    
+    
+    /****final****/
+    @PostMapping("user/loginbyotp")
+	public ResponseEntity<Map<String, Object>> loginuserbyotp(@RequestParam(required = false) String emailorphone, @RequestParam String otp){
+    	Map<String, Object> response = new HashMap<String, Object>();
+    	 
+    	RegistrationDTO  dto=new RegistrationDTO();
+		
+	    
+	    if (StringUtils.isEmpty(emailorphone) || StringUtils.isEmpty(otp)) {
+	    	response.put("success", false);;
+	        response.put("message","Missing required credentials.");
+	        return ResponseEntity.badRequest().body(response);
+	    }
 
-        if (user.isPresent()) {
-            Long userId = user.get().getId();
-            String cachedOtp = otpCache.getIfPresent(userId);
-            if (cachedOtp != null && cachedOtp.equals(otp)) {
-                Map<String, Object> responseBody = new HashMap<>();
-               user=userService.generateAndSaveToken(user);
-                System.out.println("token "+user.get().getToken());
-			
-                responseBody.put("success", true);
-                responseBody.put("message", "Login Successfull");
-                responseBody.put("token ",user.get().getToken());
-                responseBody.put("userId",user.get().getId());
-                
-                
-                return ResponseEntity.ok(responseBody);
-            } else {
-                Map<String, Object> responseBody = new HashMap<>();
-                responseBody.put("success", false);
-                responseBody.put("message", "Invalid OTP");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseBody);
-            }
-        } else {
-            Map<String, Object> responseBody = new HashMap<>();
-            responseBody.put("success", false);
-            responseBody.put("message", "User not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
-        }
-    }
+	    int otpVerificationResult = otpService.verifyOtp(emailorphone, otp);
 
+	    if (otpVerificationResult == OtpVerificationResult.SUCCESS) {
+	        // Generate authentication token (you can use JWT)
+	    //    String token = generateToken(phoneNumber);
+	    	Optional<User> user=userRepository.findByEmailOrPhone(emailorphone, emailorphone);
+	    	user=userService.generateAndSaveToken(user);
+			 
+	        response.put("success",true);
+	        response.put("message","verification successful");
+	        response.put("token",user.get().getToken());
+	        response.put("user", dto.toDTO(user.get()));
+	      //  response.setData(token);
+	        return ResponseEntity.ok(response);
+	    } else if (otpVerificationResult == OtpVerificationResult.EXPIRED) {
+	    	 response.put("success",false);
+	    	 response.put("message","OTP has expired. Please request a new OTP.");
+	         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	    } else {
+	    	 response.put("success",false);
+	    	 response.put("message","Invalid OTP. Please enter a valid OTP.");
+	         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	    }
+	}
+    @PostMapping("ngo/loginbyotp")
+   	public ResponseEntity<Map<String, Object>> loginngobyotp(@RequestParam(required = false) String emailorphone, @RequestParam String otp){
+       	Map<String, Object> response = new HashMap<String, Object>();
+       	 
+       	RegistrationDTO  dto=new RegistrationDTO();
+   		
+   	    
+   	    if (StringUtils.isEmpty(emailorphone) || StringUtils.isEmpty(otp)) {
+   	    	response.put("success", false);;
+   	        response.put("message","Missing required credentials.");
+   	        return ResponseEntity.badRequest().body(response);
+   	    }
+
+   	    int otpVerificationResult = otpService.verifyOtp(emailorphone, otp);
+
+   	    if (otpVerificationResult == OtpVerificationResult.SUCCESS) {
+   	        // Generate authentication token (you can use JWT)
+   	    //    String token = generateToken(phoneNumber);
+   	    	Optional<NGO> ngo=ngoRepository.findByEmailOrPhone(emailorphone, emailorphone);
+   	    	ngo=ngoService.generateAndSaveToken(ngo);
+   			 
+   	        response.put("success",true);
+   	        response.put("message","verification successful");
+   	        response.put("token",ngo.get().getToken());
+   	        response.put("user", dto.toDTO(ngo.get()));
+   	      //  response.setData(token);
+   	        return ResponseEntity.ok(response);
+   	    } else if (otpVerificationResult == OtpVerificationResult.EXPIRED) {
+   	    	 response.put("success",false);
+   	    	 response.put("message","OTP has expired. Please request a new OTP.");
+   	         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+   	    } else {
+   	    	 response.put("success",false);
+   	    	 response.put("message","Invalid OTP. Please enter a valid OTP.");
+   	         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+   	    }
+   	}
+    
+    /****final****/
+    @PostMapping("veterinarian/loginbyotp")
+	public ResponseEntity<Map<String, Object>> loginveterinarianbyotp(@RequestParam(required = false) String emailorphone, @RequestParam String otp){
+    	Map<String, Object> response = new HashMap<String, Object>();
+    	 
+    	RegistrationDTO  dto=new RegistrationDTO();
+		
+	    
+	    if (StringUtils.isEmpty(emailorphone) || StringUtils.isEmpty(otp)) {
+	    	response.put("success", false);;
+	        response.put("message","Missing required credentials.");
+	        return ResponseEntity.badRequest().body(response);
+	    }
+
+	    int otpVerificationResult = otpService.verifyOtp(emailorphone, otp);
+
+	    if (otpVerificationResult == OtpVerificationResult.SUCCESS) {
+	        // Generate authentication token (you can use JWT)
+	    //    String token = generateToken(phoneNumber);
+	    	Optional<Veterinarian> veterinarian=veterinarianRepository.findByEmailOrPhone(emailorphone, emailorphone);
+	    	veterinarian=veterinarianService.generateAndSaveToken(veterinarian);
+	        response.put("success",true);
+	        response.put("message","verification successful");
+	        response.put("veterinarian", dto.toDTO(veterinarian.get()));
+	      //  response.setData(token);
+	        return ResponseEntity.ok(response);
+	    } else if (otpVerificationResult == OtpVerificationResult.EXPIRED) {
+	    	 response.put("success",false);
+	    	 response.put("message","OTP has expired. Please request a new OTP.");
+	         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	    } else {
+	    	 response.put("success",false);
+	    	 response.put("message","Invalid OTP. Please enter a valid OTP.");
+	         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	    }
+	}
+    
+    
+    
+    
      
 	
     private String generateOTP() {

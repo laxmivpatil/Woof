@@ -42,8 +42,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class AzureStorageService {
 
-	  @Value("${azure.storage.account-name}")
-	    private String storageAccountName;
+	 // @Value("${azure.storage.account-name}")
+	    private String storageAccountName="satyaprofilestorage";
 
 	    @Value("${azure.storage.container-string}")
 	    private String container_string;
