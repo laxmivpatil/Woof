@@ -172,7 +172,7 @@ public class LoginController {
 	        response.put("success",true);
 	        response.put("message","verification successful");
 	        response.put("token",user.get().getToken());
-	        response.put("user", dto.toDTO(user.get()));
+	        response.put("Users", dto.toDTO(user.get()));
 	      //  response.setData(token);
 	        return ResponseEntity.ok(response);
 	    } else if (otpVerificationResult == OtpVerificationResult.EXPIRED) {
@@ -209,7 +209,7 @@ public class LoginController {
    	        response.put("success",true);
    	        response.put("message","verification successful");
    	        response.put("token",ngo.get().getToken());
-   	        response.put("user", dto.toDTO(ngo.get()));
+   	        response.put("Users", dto.toDTO(ngo.get()));
    	      //  response.setData(token);
    	        return ResponseEntity.ok(response);
    	    } else if (otpVerificationResult == OtpVerificationResult.EXPIRED) {
@@ -246,7 +246,8 @@ public class LoginController {
 	    	veterinarian=veterinarianService.generateAndSaveToken(veterinarian);
 	        response.put("success",true);
 	        response.put("message","verification successful");
-	        response.put("veterinarian", dto.toDTO(veterinarian.get()));
+	        response.put("Users", dto.toDTO(veterinarian.get()));
+	        
 	      //  response.setData(token);
 	        return ResponseEntity.ok(response);
 	    } else if (otpVerificationResult == OtpVerificationResult.EXPIRED) {
