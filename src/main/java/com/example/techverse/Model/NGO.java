@@ -31,6 +31,9 @@ public class NGO {
 
 	private String role;
 	
+    private double latitude=0L;  //
+    private double longitude=0L;  //
+	
     private String email;
     
     @Column(nullable = false,name="password")
@@ -124,6 +127,26 @@ public class NGO {
 		return "NGO [id=" + id + ", email=" + email + ", password=" + password + ", phone=" + phone + ", ngoName="
 				+ ngoName + ", accountStatus=" + accountStatus + ", otp=" + otp + ", verification=" + verification
 				+ ", token=" + token + "]";
+	}
+	
+	
+	
+	
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 	public Long getId() {

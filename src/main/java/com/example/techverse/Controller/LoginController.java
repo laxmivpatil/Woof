@@ -90,7 +90,7 @@ public class LoginController {
    	public ResponseEntity<Map<String, Object>> getuserbytoken(@RequestHeader String authorization) {
    		Map<String, Object> responseBody = new HashMap<String, Object>();
     	Optional<User> user=userRepository.findByToken(authorization.substring(7));
-   		 
+   		  
    		 if(user.isEmpty()) {
    		responseBody.put("success", false);
    		responseBody.put("message", "User with specified token not available");
@@ -109,7 +109,7 @@ public class LoginController {
 		
 		System.out.println(emailorphone);
 		Optional<User> user=userRepository.findByEmailOrPhone(emailorphone, emailorphone);
-		 
+		 	 
 		 if(user.isEmpty()) {
 		responseBody.put("success", false);
 		responseBody.put("message", "User with specified email or phone not available");

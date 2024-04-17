@@ -1,5 +1,6 @@
 package com.example.techverse.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,6 +23,13 @@ public interface NGORepository extends JpaRepository<NGO, Long> {
 	  
 
 	    Optional<NGO> findByEmailOrPhone(String email,String phone);
-	   
+	    
+	    
+	    @Query("SELECT u FROM NGO u " +
+	            "WHERE FUNCTION('ACOS', FUNCTION('SIN', FUNCTION('RADIANS', u.latitude)) * FUNCTION('SIN', FUNCTION('RADIANS', :latitude)) " +
+	            "+ FUNCTION('COS', FUNCTION('RADIANS', u.latitude)) * FUNCTION('COS', FUNCTION('RADIANS', :latitude)) * FUNCTION('COS', FUNCTION('RADIANS', u.longitude) - FUNCTION('RADIANS', :longitude))) * 6371 <= :radius")
+	     List<NGO> findNearbyNGO(@Param("latitude") Double latitude, 
+	                                @Param("longitude") Double longitude, 
+	                                @Param("radius") Double radius);
 
 }

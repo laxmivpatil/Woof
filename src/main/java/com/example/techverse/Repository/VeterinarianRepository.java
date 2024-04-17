@@ -1,5 +1,6 @@
 package com.example.techverse.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,15 @@ public interface VeterinarianRepository extends JpaRepository<Veterinarian, Long
 	  
 
 	    Optional<Veterinarian> findByEmailOrPhone(String email,String phone);
+	    
+	    
+	    
+	    
+	    @Query("SELECT u FROM Veterinarian u " +
+	            "WHERE FUNCTION('ACOS', FUNCTION('SIN', FUNCTION('RADIANS', u.latitude)) * FUNCTION('SIN', FUNCTION('RADIANS', :latitude)) " +
+	            "+ FUNCTION('COS', FUNCTION('RADIANS', u.latitude)) * FUNCTION('COS', FUNCTION('RADIANS', :latitude)) * FUNCTION('COS', FUNCTION('RADIANS', u.longitude) - FUNCTION('RADIANS', :longitude))) * 6371 <= :radius")
+	     List<Veterinarian> findNearbyVeterinarian(@Param("latitude") Double latitude, 
+	                                @Param("longitude") Double longitude, 
+	                                @Param("radius") Double radius);
 	   
 }

@@ -16,15 +16,20 @@ public class AnimalRescueRequest {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String animalType;
-    private String location;
-    private String priorityIssue;
-    private String contactDetails;
-    private String caption;
+     
+    private String location; ///
+    private String priorityIssue;   //
+    private String contactDetails;   //
+    private String caption;  //caption
+    
+    private double latitude;  //
+    private double longitude;  //
+ 
+    private String imgorvideo="";
 
-    @OneToMany(mappedBy = "rescueRequest", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Photo> photos = new ArrayList<>();
-
+    
+    
+    
 
 	public Long getId() {
 		return id;
@@ -45,31 +50,12 @@ public class AnimalRescueRequest {
 		// TODO Auto-generated constructor stub
 	}
 
-	public AnimalRescueRequest(Long id, User user, String animalType, String location, String priorityIssue,
-			String contactDetails, String caption, List<Photo> photos) {
-		super();
-		this.id = id;
-		this.user = user;
-		this.animalType = animalType;
-		this.location = location;
-		this.priorityIssue = priorityIssue;
-		this.contactDetails = contactDetails;
-		this.caption = caption;
-		this.photos = photos;
-	}
+	 
 
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-	public String getAnimalType() {
-		return animalType;
-	}
-
-	public void setAnimalType(String animalType) {
-		this.animalType = animalType;
-	}
-
+ 
 	public String getLocation() {
 		return location;
 	}
@@ -102,14 +88,31 @@ public class AnimalRescueRequest {
 		this.caption = caption;
 	}
 
-	public List<Photo> getPhotos() {
-		return photos;
+	public double getLatitude() {
+		return latitude;
 	}
 
-	public void setPhotos(List<Photo> photos) {
-		this.photos = photos;
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
 	}
-    
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public String getImgorvideo() {
+		return imgorvideo;
+	}
+
+	public void setImgorvideo(String imgorvideo) {
+		this.imgorvideo = imgorvideo;
+	}
+
+	 
     
     
     
