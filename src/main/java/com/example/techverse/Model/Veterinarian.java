@@ -74,7 +74,8 @@ import javax.persistence.Table;
 	    @Column 
 	    private String veterinarianCertification;
 	    
-		 
+	    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
+	    private List<Story> stories = new ArrayList<>();
 		public Veterinarian() {
 			super();
 			// TODO Auto-generated constructor stub

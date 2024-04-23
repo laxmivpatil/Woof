@@ -231,7 +231,7 @@ import javax.persistence.OneToMany;
         this.notificationsEnabled = notificationsEnabled;
     }
 	
-	 @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	    private List<Story> stories;
 	 
 	 public List<Story> getStories() {
@@ -252,10 +252,7 @@ import javax.persistence.OneToMany;
 	    // Constructors, getters, setters, and other methods...
 
 	    // Add a story to the user's created stories
-	    public void addStory(Story story) {
-	        stories.add(story);
-	        story.setCreator(this);
-	    }
+	     
 
 	    // Add a story to the user's followed stories
 	    public void addStoryFollowed(Story story) {

@@ -23,13 +23,17 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.SavedPost;
 import com.example.techverse.Model.Story;
 import com.example.techverse.Model.User;
+import com.example.techverse.Model.Veterinarian;
 import com.example.techverse.Repository.CommentRepository;
+import com.example.techverse.Repository.NGORepository;
 import com.example.techverse.Repository.SavedPostRepository;
 import com.example.techverse.Repository.StoryRepository;
 import com.example.techverse.Repository.UserRepository;
+import com.example.techverse.Repository.VeterinarianRepository;
 import com.example.techverse.exception.UnauthorizedAccessException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -41,6 +45,12 @@ public class StoryService {
 	
 	 @Autowired
 	    private UserRepository userRepository;
+	 
+	  @Autowired
+	    private  VeterinarianRepository veterinarianRepository;
+
+	    @Autowired
+	    private NGORepository NgoRepository;
 	    @Autowired
 	    private StoryRepository storyRepository;
 	    
@@ -50,7 +60,8 @@ public class StoryService {
 	    @Autowired
 	    private SavedPostRepository savedPostRepository;
 	  
-	    
+	    @Autowired
+	    private StorageService storageService;
 	    
 	    private String uploadDir="F:\\MyProject\\Woof\\Files\\";
 	    
@@ -71,6 +82,67 @@ public class StoryService {
 	        }
 	    }
 
+	    
+	    public Story createStory(String entityType, Long entityId,  String caption, MultipartFile media,String visibility)  throws IOException, UnauthorizedAccessException{
+	        // Find the entity based on entityType and entityId
+	        switch (entityType.toLowerCase()) {
+	            case "user":
+	                User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+	                return saveStory(user, caption,  media, visibility);
+	            case "ngo":
+	                NGO ngo = NgoRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+	                return saveStory(ngo,  caption,  media, visibility);
+	            case "veterinarian":
+	                Veterinarian veterinarian = veterinarianRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+	                return saveStory(veterinarian,  caption,  media, visibility);
+	            default:
+	                throw new IllegalArgumentException("Invalid entity type");
+	        }
+	    }
+	    private Story saveStory(User user, String caption, MultipartFile media,String visibility) {
+	        Story story = new Story();
+	        if(media!=null)
+	        {
+	        	String path=storageService.uploadFileOnAzure(media);
+	        	story.setMediaUrl(path);
+	        }
+	        story.setCaption(caption);
+	        story.setVisibility(visibility);
+	        story.setUser(user);
+	        return storyRepository.save(story);
+	    }
+
+	    private Story saveStory(NGO ngo,String caption, MultipartFile media,String visibility) {
+	    	 Story story = new Story();
+		        if(media!=null)
+		        {
+		        	String path=storageService.uploadFileOnAzure(media);
+		        	story.setMediaUrl(path);
+		        }
+		        story.setCaption(caption);
+		        story.setVisibility(visibility);
+	        story.setNgo(ngo);
+	        return storyRepository.save(story);
+	    }
+
+	    private Story saveStory(Veterinarian veterinarian, String caption, MultipartFile media,String visibility) {
+	    	 Story story = new Story();
+		        if(media!=null)
+		        {
+		        	String path=storageService.uploadFileOnAzure(media);
+		        	story.setMediaUrl(path);
+		        }
+		        story.setCaption(caption);
+		        story.setVisibility(visibility);
+	        story.setVeterinarian(veterinarian);
+	        return storyRepository.save(story);
+	    }
+	    
+	    
+	    public List<Story> getAllStories() {
+	        return storyRepository.findAll();
+	    }
+	 /*   
 	    @Transactional
 	    public Story createStory(Long user_id, String caption, MultipartFile media,String visibility)
 	            throws IOException, UnauthorizedAccessException {
@@ -127,8 +199,8 @@ public class StoryService {
 	        } catch (IOException ex) {
 	            throw new RuntimeException("Could not store file: " + fileName, ex);
 	        }
-	    }
-
+	        }
+     
 	    public Story editStory(Long storyId, String caption, MultipartFile media, String visibility) throws IOException {
 	        // Find the story by its ID
 	        Optional<Story> optionalStory = storyRepository.findById(storyId);
@@ -316,6 +388,6 @@ public class StoryService {
 
 	        return userStories;
 	    }
-	    	
+	    */	
 
 }

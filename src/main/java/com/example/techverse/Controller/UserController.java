@@ -116,7 +116,7 @@ public class UserController {
 	    }
 	}
 
-	
+	/*
 	@GetMapping("/saved-posts")
 	public ResponseEntity<List<SavedPostResponseDTO>> getSavedPostsOfOtherUsers(@RequestParam Long userId) {
 	    try {
@@ -154,7 +154,7 @@ public class UserController {
 	    }
 	}
 
-	
+	*/
 	
 	
 	//cloud

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,19 +51,26 @@ public class StoryController {
     @Autowired
     private CommentRepository commentRepository;
 
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse> createStory(@RequestParam("user_id") Long user_id,
+    @PostMapping("/create/{entityType}/{entityId}")
+    public ResponseEntity<ApiResponse> createStory(
+    		 @RequestHeader("Authorization") String authorization,
+    		 
+    		 @PathVariable String entityType,
+             @PathVariable Long entityId,
                                                    @RequestParam("caption") String caption,
                                                    @RequestParam("media") MultipartFile media,
                                                    @RequestParam("visibility") String visibility) {
         try {
-            Story createdStory = storyService.createStory(user_id, caption, media,visibility);
+        	  Map<String, Object> response = new HashMap<String, Object>();
+             
+            Story createdStory = storyService.createStory(entityType,entityId, caption, media,visibility);
 
             if (createdStory != null) {
                 // Construct the response with the desired fields
                 Map<String, Object> responseData = new HashMap<>();
                 responseData.put("story_id", createdStory.getId());
-                responseData.put("user_id", user_id);
+                responseData.put("entity_id", entityId);
+                responseData.put("entity_type", entityType);
                 responseData.put("content", caption);
                 responseData.put("visibility", visibility);
                 responseData.put("timestamp", createdStory.getCreatedAt().toString()); // Assuming getTimestamp returns a Date
@@ -86,8 +94,12 @@ public class StoryController {
                     .body(new ApiResponse(false, "An unexpected error occurred"));
         }
 }
-    
-    @GetMapping("/{user_id}/stories")
+    @GetMapping("/")
+    public ResponseEntity<List<Story>> getAllStories() {
+        List<Story> stories = storyService.getAllStories();
+        return ResponseEntity.ok(stories);
+    }
+   /* @GetMapping("/{user_id}/stories")
     public ResponseEntity<List<StoryResponse>> getStoriesByUser(@PathVariable("user_id") Long userId) {
          	List<Story> allStories = storyService.getStoriesByUser(userRepository.findById(userId).orElse(null));
 
@@ -318,4 +330,6 @@ public class StoryController {
 
         return ResponseEntity.ok(response);
     }
+    
+    */
 }

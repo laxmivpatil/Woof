@@ -14,6 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Story {
 
@@ -21,9 +23,21 @@ public class Story {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+     
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User creator;
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "ngo_id")
+    private NGO ngo;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "veterinarian_id")
+    private Veterinarian veterinarian;
 
     @Column(nullable = false)
     private String caption;
@@ -49,12 +63,38 @@ public class Story {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+   
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
     
       
-    public Story() {
+    public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public NGO getNgo() {
+		return ngo;
+	}
+
+	public void setNgo(NGO ngo) {
+		this.ngo = ngo;
+	}
+
+	public Veterinarian getVeterinarian() {
+		return veterinarian;
+	}
+
+	public void setVeterinarian(Veterinarian veterinarian) {
+		this.veterinarian = veterinarian;
+	}
+
+	public Story() {
         this.createdAt = LocalDateTime.now();
 		 this.updatedAt = LocalDateTime.now();
 
@@ -63,14 +103,7 @@ public class Story {
      
       
 
-	public Story( User creator, String caption, String mediaUrl, String visibility) {
-		  this.creator = creator;
-		this.caption = caption;
-		this.visibility = visibility;
-		this.mediaUrl = mediaUrl;
-		 this.createdAt=LocalDateTime.now();
-		 this.updatedAt = LocalDateTime.now();
-	}
+	 
 
 
 
@@ -83,13 +116,7 @@ public class Story {
         return id;
     }
 
-    public User getCreator() {
-        return creator;
-    }
-
-    public void setCreator(User creator) {
-        this.creator = creator;
-    }
+    
 
     public String getCaption() {
         return caption;
