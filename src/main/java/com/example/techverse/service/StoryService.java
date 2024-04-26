@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -109,6 +109,8 @@ public class StoryService {
 	        story.setCaption(caption);
 	        story.setVisibility(visibility);
 	        story.setUser(user);
+	        story.setNgo(null);
+	        story.setVeterinarian(null);
 	        return storyRepository.save(story);
 	    }
 
@@ -122,6 +124,10 @@ public class StoryService {
 		        story.setCaption(caption);
 		        story.setVisibility(visibility);
 	        story.setNgo(ngo);
+	        story.setUser(null);
+	        
+	        story.setVeterinarian(null);
+	         
 	        return storyRepository.save(story);
 	    }
 
@@ -135,6 +141,8 @@ public class StoryService {
 		        story.setCaption(caption);
 		        story.setVisibility(visibility);
 	        story.setVeterinarian(veterinarian);
+	        story.setNgo(null);
+	        story.setUser(null);
 	        return storyRepository.save(story);
 	    }
 	    
@@ -142,6 +150,89 @@ public class StoryService {
 	    public List<Story> getAllStories() {
 	        return storyRepository.findAll();
 	    }
+	    
+	    public Map<String, List<Object>> getAllStoriesGroupedByEntities() {
+	        List<Story> stories = storyRepository.findPublicStories();
+	        Map<String, List<Object>> groupedStories = new HashMap<>();
+
+	        for (Story story : stories) {
+	            if (story.getUser() != null) {
+	                String userId = "user^" + story.getUser().getId()+"^"+story.getUser().getFullName()+"^"+story.getUser().getProfile();
+	                //String userProfile = story.getUser().getFullName(); // Assuming you have a method to get user profile
+	                 
+	                    List<Object> userStoriesAndProfile = groupedStories.computeIfAbsent(userId, k -> new ArrayList<>());
+	                    userStoriesAndProfile.add(story);
+	                
+	            } else if (story.getNgo() != null) {
+	                String ngoId = "ngo^" + story.getNgo().getId()+"^"+story.getNgo().getFullName()+"^"+story.getNgo().getNGOProfile();
+	                List<Object> ngoStories = groupedStories.computeIfAbsent(ngoId, k -> new ArrayList<>());
+	                ngoStories.add(story);
+	            } else if (story.getVeterinarian() != null) {
+	                String vetId = "vet^" + story.getVeterinarian().getId()+"^"+story.getVeterinarian().getFullName()+"^"+story.getVeterinarian().getVeterinarianProfile();;
+	                List<Object> vetStories = groupedStories.computeIfAbsent(vetId, k -> new ArrayList<>());
+	                vetStories.add(story);
+	            }
+	        }
+
+	        // Convert the map to the desired format
+	        List<Object> allUsers = new ArrayList<>();
+	        for (Map.Entry<String, List<Object>> entry : groupedStories.entrySet()) {
+	        	System.out.println(entry.getKey());
+	            String[] parts = entry.getKey().split("\\^");
+	            System.out.println(parts.length);
+	            System.out.println(parts[0]+"    "+parts[1]+"   "+parts[2]+"  "+parts[3]);
+	             
+	             
+	            System.out.println(parts[0]+"    "+parts[1]+"   "+parts[2]+"  "+parts[3]);
+		        
+	            Map<String, Object> userMap = new HashMap<>();
+	            userMap.put("id", parts[1]);
+	            userMap.put("entitytype", parts[0]);
+	            userMap.put("fullname", parts[2]); // Implement this method to get the full name based on entity type and ID
+	            userMap.put("profile", parts[3]); // Implement this method to get the full name based on entity type and ID
+	            userMap.put("stories", entry.getValue());
+	            allUsers.add(userMap);
+	        }
+
+	        // Create the final map with the "alluser" key
+	        Map<String, List<Object>> result = new HashMap<>();
+	        result.put("alluser", allUsers);
+	        return result;
+	    }
+	    /*
+	    public Map<String, List<Object>> getAllStoriesGroupedByEntities() {
+	        List<Story> stories = storyRepository.findPublicStories();	      
+	        		Map<String, List<Object>> groupedStories = new HashMap<>();
+
+	        for (Story story : stories) {
+	            // Group stories by user ID
+	        	 if (story.getUser() != null) {
+	                 String userId = "user_" + story.getUser().getId();
+	                String userProfile = story.getUser().getFullName(); // Assuming you have a method to get user profile
+	                 if (userProfile != null) {
+	                     List<Object> userStoriesAndProfile = groupedStories.computeIfAbsent(userId, k -> new ArrayList<>());
+	                     userStoriesAndProfile.add(story);
+	                     userStoriesAndProfile.add(userProfile);
+	                 }
+	             }
+
+	            // Group stories by NGO ID
+	            if (story.getNgo() != null) {
+	                String ngoId = "ngo_" + story.getNgo().getId();
+	                groupedStories.computeIfAbsent(ngoId, k -> new ArrayList<>()).add(story);
+	            }
+
+	            // Group stories by veterinarian ID
+	            if (story.getVeterinarian() != null) {
+	                String vetId = "vet_" + story.getVeterinarian().getId();
+	                groupedStories.computeIfAbsent(vetId, k -> new ArrayList<>()).add(story);
+	            }
+	        }
+
+	        return groupedStories;
+	    }
+	    
+	    */
 	 /*   
 	    @Transactional
 	    public Story createStory(Long user_id, String caption, MultipartFile media,String visibility)

@@ -94,10 +94,20 @@ public class StoryController {
                     .body(new ApiResponse(false, "An unexpected error occurred"));
         }
 }
-    @GetMapping("/")
-    public ResponseEntity<List<Story>> getAllStories() {
+    @GetMapping("/{entityType}/{entityId}")
+    public ResponseEntity<List<Story>> getAllStories( @RequestHeader("Authorization") String authorization,
+   		 
+   		 @PathVariable String entityType,
+            @PathVariable Long entityId) {
         List<Story> stories = storyService.getAllStories();
         return ResponseEntity.ok(stories);
+    }
+    
+    
+    @GetMapping("/grouped")
+    public ResponseEntity<Map<String, List<Object>>> getAllStoriesGroupedByEntities() {
+        Map<String, List<Object>> groupedStories = storyService.getAllStoriesGroupedByEntities();
+        return ResponseEntity.ok(groupedStories);
     }
    /* @GetMapping("/{user_id}/stories")
     public ResponseEntity<List<StoryResponse>> getStoriesByUser(@PathVariable("user_id") Long userId) {

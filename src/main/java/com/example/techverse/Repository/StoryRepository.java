@@ -1,9 +1,13 @@
 package com.example.techverse.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -15,7 +19,12 @@ import com.example.techverse.Model.User;
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
     // Define custom query methods to retrieve stories based on specific criteria
-
+	@Query("SELECT s FROM Story s WHERE s.visibility = 'public'")
+    List<Story> findPublicStories();
+	
+	 
+	 
+	  
     // For example, to find a story by its ID
     Story findById(long id);
     /*List<Story> findByCreator(User user);

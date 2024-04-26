@@ -26,17 +26,17 @@ public class Story {
      
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "ngo_id")
+    @JoinColumn(name = "ngo_id", nullable = true)
     private NGO ngo;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "veterinarian_id")
+    @JoinColumn(name = "veterinarian_id", nullable = true)
     private Veterinarian veterinarian;
 
     @Column(nullable = false)
