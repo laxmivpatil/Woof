@@ -163,6 +163,7 @@ public class RescueRequestController {
 			}
 
 			rescueRequest = rescueRequestRepository.save(rescueRequest);
+			break;
 		case "ngo":
 			NGO ngo = NgoRepository.findById(entityId)
 					.orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
@@ -186,6 +187,7 @@ public class RescueRequestController {
 			}
 
 			rescueRequest = rescueRequestRepository.save(rescueRequest);
+			break;
 
 		case "veterinarian":
 			Veterinarian veterinarian = veterinarianRepository.findById(entityId)
@@ -209,6 +211,7 @@ public class RescueRequestController {
 			}
 
 			rescueRequest = rescueRequestRepository.save(rescueRequest);
+			break;
 
 		}
 
