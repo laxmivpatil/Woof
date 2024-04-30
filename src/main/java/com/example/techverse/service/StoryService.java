@@ -65,7 +65,7 @@ public class StoryService {
 	    
 	    private String uploadDir="F:\\MyProject\\Woof\\Files\\";
 	    
-	    
+	    /*
 	    @Transactional
 	    @Scheduled(fixedRate = 24 * 60 * 60 * 1000) // 24 hours in milliseconds
 	    public void deleteExpiredStories() {
@@ -82,7 +82,7 @@ public class StoryService {
 	        }
 	    }
 
-	    
+	    */
 	    public Story createStory(String entityType, Long entityId,  String caption, MultipartFile media,String visibility)  throws IOException, UnauthorizedAccessException{
 	        // Find the entity based on entityType and entityId
 	        switch (entityType.toLowerCase()) {

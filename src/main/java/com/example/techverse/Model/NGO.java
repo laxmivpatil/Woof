@@ -73,6 +73,10 @@ public class NGO {
     private List<Story> stories = new ArrayList<>();
     
     
+
+    @OneToMany(mappedBy = "ngo", cascade = CascadeType.ALL)
+    private List<AnimalRescueRequest> rescueRequests;
+    
     
     
 	public NGO() {

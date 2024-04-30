@@ -74,11 +74,31 @@ import javax.persistence.Table;
 	    @Column 
 	    private String veterinarianCertification;
 	    
+	    
+	    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
+	    private List<AnimalRescueRequest> rescueRequests;
+	    
 	    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
 	    private List<Story> stories = new ArrayList<>();
 		public Veterinarian() {
 			super();
 			// TODO Auto-generated constructor stub
+		}
+
+		public List<AnimalRescueRequest> getRescueRequests() {
+			return rescueRequests;
+		}
+
+		public void setRescueRequests(List<AnimalRescueRequest> rescueRequests) {
+			this.rescueRequests = rescueRequests;
+		}
+
+		public List<Story> getStories() {
+			return stories;
+		}
+
+		public void setStories(List<Story> stories) {
+			this.stories = stories;
 		}
 
 		public String getVeterinarianCertification() {

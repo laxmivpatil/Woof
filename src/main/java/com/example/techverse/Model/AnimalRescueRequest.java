@@ -3,6 +3,8 @@ package com.example.techverse.Model;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,10 +14,24 @@ public class AnimalRescueRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+     
+
+    
+    
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "ngo_id", nullable = true)
+    private NGO ngo;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "veterinarian_id", nullable = true)
+    private Veterinarian veterinarian;
      
     private String location; ///
     private String priorityIssue;   //
@@ -30,6 +46,22 @@ public class AnimalRescueRequest {
     
     
     
+
+	public NGO getNgo() {
+		return ngo;
+	}
+
+	public void setNgo(NGO ngo) {
+		this.ngo = ngo;
+	}
+
+	public Veterinarian getVeterinarian() {
+		return veterinarian;
+	}
+
+	public void setVeterinarian(Veterinarian veterinarian) {
+		this.veterinarian = veterinarian;
+	}
 
 	public Long getId() {
 		return id;
