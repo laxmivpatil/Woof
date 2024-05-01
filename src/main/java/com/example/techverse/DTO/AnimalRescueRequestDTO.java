@@ -5,6 +5,7 @@ public class AnimalRescueRequestDTO {
     private Long userId;
     private String userName;
     private String userProfile;
+    private String userAddress;
     
     private String datetimeFormatted;
     private String location;
@@ -73,6 +74,12 @@ public class AnimalRescueRequestDTO {
 	}
 	public void setDistance(double distance) {
 		this.distance = distance;
+	}
+	public String getUserAddress() {
+		return userAddress;
+	}
+	public void setUserAddress(String userAddress) {
+		this.userAddress = userAddress;
 	}
     
     

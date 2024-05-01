@@ -50,13 +50,15 @@ public class AnimalRescueRequestService {
                 dto.setUserName(request.getUser().getFullName());
                 dto.setUserProfile(request.getUser().getProfile());
                 dto.setRole("user");
-                dto.setUserId(request.getUser().getId());            
+                dto.setUserId(request.getUser().getId());  
+                dto.setUserAddress("");
         }
         if (request.getNgo() != null) {
                 dto.setUserName(request.getNgo().getFullName());
                 dto.setUserProfile(request.getNgo().getNGOProfile());
                 dto.setRole("ngo"); 
                 dto.setUserId(request.getNgo().getId());  
+                dto.setUserAddress(request.getNgo().getAddress());
             
         }
         if (request.getVeterinarian() != null) {
@@ -64,6 +66,7 @@ public class AnimalRescueRequestService {
              dto.setUserProfile(request.getVeterinarian().getVeterinarianProfile());
              dto.setRole("veterinarian"); 
              dto.setUserId(request.getVeterinarian().getId());  
+             dto.setUserAddress(request.getVeterinarian().getAddress());
         }
         
         return dto;
