@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.techverse.DistanceCalculator;
+import com.example.techverse.DTO.AnimalRescueRequestDTO;
 import com.example.techverse.DTO.RegistrationDTO;
 import com.example.techverse.Model.AnimalRescueRequest;
 import com.example.techverse.Model.NGO;
@@ -18,9 +20,12 @@ import com.example.techverse.Repository.PhotoRepository;
 import com.example.techverse.Repository.UserRepository;
 import com.example.techverse.Repository.VeterinarianRepository;
 import com.example.techverse.exception.UnauthorizedAccessException;
+import com.example.techverse.service.AnimalRescueRequestService;
 import com.example.techverse.service.StorageService;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +51,9 @@ public class RescueRequestController {
 	private final UserRepository userRepository;
 	private final AnimalRescueRequestRepository rescueRequestRepository;
 	private final PhotoRepository photoRepository;
+	
+	@Autowired
+    private AnimalRescueRequestService  animalRescueRequestService;
 
 	@Autowired
 	private VeterinarianRepository veterinarianRepository;
@@ -63,69 +71,7 @@ public class RescueRequestController {
 		this.rescueRequestRepository = rescueRequestRepository;
 		this.photoRepository = photoRepository;
 	}
-	/*
-	 * @PostMapping("/post_rescue_request") public ResponseEntity<Map<String,
-	 * Object>> postRescueRequest(
-	 * 
-	 * @RequestHeader("Authorization") String authorization,
-	 * 
-	 * @RequestPart("role") String role,
-	 * 
-	 * @RequestPart("latitude") String latitude,
-	 * 
-	 * @RequestPart("longitude") String longitude,
-	 * 
-	 * @RequestPart("location") String location,
-	 * 
-	 * @RequestPart("priority_issue") String priorityIssue,
-	 * 
-	 * @RequestPart("contact_details") String contactDetails,
-	 * 
-	 * @RequestPart("caption") String caption,
-	 * 
-	 * @RequestPart(value = "imgorvideo", required = false) MultipartFile imgorvideo
-	 * ) throws IOException { // Find the user based on the access token or create a
-	 * new user if it's their first request
-	 * 
-	 * Optional<User> user1 =
-	 * userRepository.findByToken(authorization.substring(7)); Map<String, Object>
-	 * response = new HashMap<String, Object>(); if (user1.isEmpty()) {
-	 * response.put("success",false); response.put("message","Unauthorized user");
-	 * return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response); } User
-	 * user = user1.get(); double lan=Double.parseDouble(latitude); double
-	 * lon=Double.parseDouble(longitude); // Initialize the rescueRequest object
-	 * AnimalRescueRequest rescueRequest = new AnimalRescueRequest();
-	 * rescueRequest.setUser(user); rescueRequest.setLatitude(lan);
-	 * rescueRequest.setLongitude(lon); rescueRequest.setLocation(location);
-	 * rescueRequest.setPriorityIssue(priorityIssue);
-	 * rescueRequest.setContactDetails(contactDetails);
-	 * rescueRequest.setCaption(caption);
-	 * 
-	 * // Save the rescue request in the database
-	 * 
-	 * // Process photos if available if (imgorvideo != null &&
-	 * !imgorvideo.isEmpty()) { String path=
-	 * storageService.uploadFileOnAzure(imgorvideo);
-	 * rescueRequest.setImgorvideo(path); }
-	 * 
-	 * 
-	 * double roundedLatitude = Math.round(lan * 1e6) / 1e6; double roundedLongitude
-	 * = Math.round(lon * 1e6) / 1e6; List<NGO>
-	 * nearbyNGO=NgoRepository.findNearbyNGO(roundedLatitude, roundedLongitude,
-	 * 5.0); List<Veterinarian>
-	 * nearbyVeterinarian=veterinarianRepository.findNearbyVeterinarian(
-	 * roundedLatitude, roundedLongitude, 5.0); List<RegistrationDTO>
-	 * registrationDTOs=new ArrayList<>(); for(NGO ngo: nearbyNGO) { RegistrationDTO
-	 * dto=new RegistrationDTO(); registrationDTOs.add(dto.toDTO(ngo)); }
-	 * for(Veterinarian v: nearbyVeterinarian) { RegistrationDTO dto=new
-	 * RegistrationDTO(); registrationDTOs.add(dto.toDTO(v)); }
-	 * response.put("success",true);
-	 * response.put("message","Rescue request posted successfully");
-	 * response.put("nearbyngoandvet", registrationDTOs); rescueRequest =
-	 * rescueRequestRepository.save(rescueRequest); // response.setData(token);
-	 * return ResponseEntity.ok(response); }
-	 * 
-	 */
+	 
 
 	@PostMapping("/post_rescue_request/{entityType}/{entityId}")
 	public ResponseEntity<Map<String, Object>> postRescueRequest(@RequestHeader("Authorization") String authorization,
@@ -139,6 +85,11 @@ public class RescueRequestController {
 		double lan = Double.parseDouble(latitude);
 		double lon = Double.parseDouble(longitude);
 		AnimalRescueRequest rescueRequest = new AnimalRescueRequest();
+		LocalDateTime dateTime = LocalDateTime.now();
+
+        // Set the time zone to GMT+5:30 (India Standard Time)
+        ZoneId zoneId = ZoneId.of("Asia/Kolkata");
+        LocalDateTime dateTimeInIndia = dateTime.atZone(zoneId).toLocalDateTime();
 		switch (entityType.toLowerCase()) {
 		case "user":
 			User user = userRepository.findById(entityId)
@@ -153,7 +104,7 @@ public class RescueRequestController {
 			rescueRequest.setPriorityIssue(priorityIssue);
 			rescueRequest.setContactDetails(contactDetails);
 			rescueRequest.setCaption(caption);
-
+			rescueRequest.setDatetime(dateTimeInIndia);
 			// Save the rescue request in the database
 
 			// Process photos if available
@@ -177,7 +128,7 @@ public class RescueRequestController {
 			rescueRequest.setPriorityIssue(priorityIssue);
 			rescueRequest.setContactDetails(contactDetails);
 			rescueRequest.setCaption(caption);
-
+			rescueRequest.setDatetime(dateTimeInIndia);
 			// Save the rescue request in the database
 
 			// Process photos if available
@@ -201,6 +152,8 @@ public class RescueRequestController {
 			rescueRequest.setPriorityIssue(priorityIssue);
 			rescueRequest.setContactDetails(contactDetails);
 			rescueRequest.setCaption(caption);
+			rescueRequest.setDatetime(dateTimeInIndia);
+			System.out.println(dateTimeInIndia);
 
 			// Save the rescue request in the database
 
@@ -238,9 +191,60 @@ public class RescueRequestController {
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("/user_rescue_requests")
+	@GetMapping("/user_rescue_requests/{entityType}/{entityId}")
+	public ResponseEntity<Map<String,Object>> getUserRescueRequests(
+			@RequestHeader("Authorization") String accessToken,@PathVariable String entityType, @PathVariable Long entityId,
+			@RequestParam("lat") String latitude,@RequestParam("long") String longitude) throws IOException, UnauthorizedAccessException {
+		// Find the user based on the access token
+		double lan = Double.parseDouble(latitude);
+		double lon = Double.parseDouble(longitude);
+		Map<String, Object> response = new HashMap<String, Object>();
+		double roundedLatitude = Math.round(lan * 1e6) / 1e6;
+		double roundedLongitude = Math.round(lon * 1e6) / 1e6;
+		switch (entityType.toLowerCase()) {
+        case "user":
+            User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+            break;
+        case "ngo":
+            NGO ngo = NgoRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+            break;
+        case "veterinarian":
+            Veterinarian veterinarian = veterinarianRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+            break;
+         
+    }
+		 
+		 
+
+		// Retrieve rescue requests posted by the user
+		List<AnimalRescueRequest> userRescueRequests = rescueRequestRepository.findAllByOrderByDatetimeDesc();
+		List<AnimalRescueRequestDTO> dto1=new ArrayList<AnimalRescueRequestDTO>();
+		for (AnimalRescueRequest request : userRescueRequests) {
+			System.out.println(request.getId()+" "+request.getDatetime());
+			AnimalRescueRequestDTO a=animalRescueRequestService.mapToDTO(request);
+			double distance=DistanceCalculator.calculateDistance(lan, lon, request.getLatitude(),request.getLongitude());
+			a.setDistance(distance);
+			
+			dto1.add(a);
+			
+		}
+		response.put("success", true);
+		response.put("message", "Post retrived successfully");
+		response.put("post", dto1);
+		return ResponseEntity.ok(response);
+	}
+	
+	
+	
+	
+	
+	
+	/*
+	 @GetMapping("/user_rescue_requests")
 	public ResponseEntity<List<AnimalRescueRequest>> getUserRescueRequests(
-			@RequestHeader("Authorization") String accessToken) {
+			@RequestHeader("Authorization") String accessToken,@PathVariable String entityType, @PathVariable Long entityId,
+			@RequestParam("lat") String latitude,@RequestParam("long") String longitude
+			) {
 		// Find the user based on the access token
 
 		Optional<User> userOptional = userRepository.findByToken(accessToken.substring(7));
@@ -259,4 +263,6 @@ public class RescueRequestController {
 		}
 		return new ResponseEntity<>(userRescueRequests, HttpStatus.OK);
 	}
+	*/
+	 
 }

@@ -10,6 +10,8 @@ public interface AnimalRescueRequestRepository extends JpaRepository<AnimalRescu
     // Add any custom query methods if needed
 	
 	   List<AnimalRescueRequest> findByUser(User user);
+	   
+	   List<AnimalRescueRequest> findAllByOrderByDatetimeDesc();
 
 }
 

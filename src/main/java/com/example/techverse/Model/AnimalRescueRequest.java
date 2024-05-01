@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +14,8 @@ public class AnimalRescueRequest {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-     
-
-    
-    
-    @JsonIgnore
+ 
+	@JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
@@ -43,9 +40,20 @@ public class AnimalRescueRequest {
  
     private String imgorvideo="";
 
+    private LocalDateTime datetime;
+    
+    
+
     
     
     
+	public LocalDateTime getDatetime() {
+		return datetime;
+	}
+
+	public void setDatetime(LocalDateTime datetime) {
+		this.datetime = datetime;
+	}
 
 	public NGO getNgo() {
 		return ngo;
