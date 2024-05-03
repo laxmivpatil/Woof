@@ -8,6 +8,7 @@ import com.example.techverse.Model.MonthlyDetails;
 import com.example.techverse.Model.Pet;
 import com.example.techverse.Repository.PetRepository;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +34,57 @@ public class PetService {
 	                .map(pet -> new PetInfoDTO(pet.getId(), pet.getPetName(),pet.getImg1(),pet.getImg2(),pet.getImg3()))
 	                .collect(Collectors.toList());
 	    }
-	    
-	    
+	    public Map<String, Object> getPetsGroupedByNameAndGender(String petCategory) {
+	        List<Pet> pets = petRepository.findByPetCategoryIgnoreCase(petCategory);
+
+	        // Group pets by name and gender
+	        Map<String, Map<String, Object>> groupedPetsByNameAndGender = pets.stream()
+	                .collect(Collectors.groupingBy(
+	                        Pet::getPetName,
+	                        Collectors.toMap(
+	                                Pet::getGender,
+	                                pet -> {
+	                                    Map<String, Object> petInfo = new HashMap<>();
+	                                    petInfo.put("id", pet.getId());
+	                                    petInfo.put("petName", pet.getPetName());
+	                                    petInfo.put("gender", pet.getGender());
+	                                    petInfo.put("description", pet.getDescription());
+	                                    petInfo.put("img1", pet.getImg1());
+	                                    petInfo.put("img2", pet.getImg2());
+	                                    petInfo.put("img3", pet.getImg3());
+	                                    return petInfo;
+	                                }
+	                        )
+	                ));
+
+	        Map<String, Object> response = new HashMap<>();
+	        List<Map<String, Object>> listOfPets = new ArrayList<>();
+	        for (Map.Entry<String, Map<String, Object>> entry : groupedPetsByNameAndGender.entrySet()) {
+	            Map<String, Object> petGroup = new HashMap<>();
+	            petGroup.put("pet_name", entry.getKey());
+	            if(entry.getValue().get("Male")!=null) {
+	            petGroup.put("male", entry.getValue().get("Male")); 
+	            }
+	            else
+	            {
+	            	 petGroup.put("male", ""); 
+	            	 // Assuming male pets are grouped under "Male"
+	            }
+	            if(entry.getValue().get("Female")!=null) {
+		            petGroup.put("female", entry.getValue().get("Female")); 
+		            }
+		            else
+		            {
+		            	 petGroup.put("female", ""); 
+		            	 // Assuming male pets are grouped under "Male"
+		            }
+	             listOfPets.add(petGroup);
+	        }
+	        response.put("list_of_pets", listOfPets);
+
+	        return response;
+	    }
+
 	    
 	    public PetInfoDTO getPetInfoById(Long petId) {
 	        Optional<Pet> optionalPet = petRepository.findById(petId);

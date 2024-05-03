@@ -26,14 +26,5 @@ public class DistanceCalculator {
         return distance;
     }
 
-    public static void main(String[] args) {
-        // Example coordinates for two points
-        double lat1 = 52.5200;
-        double lon1 = 13.4050;
-        double lat2 = 48.8566;
-        double lon2 = 2.3522;
-
-        double distance = calculateDistance(lat1, lon1, lat2, lon2);
-        System.out.println("Distance between the points: " + distance + " kilometers");
-    }
+    
 }

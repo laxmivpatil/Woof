@@ -33,7 +33,7 @@ public class PetController {
 
         return response;
     }
-    @GetMapping("/pets")
+    @GetMapping("/petss")
     public Map<String, Object> getPetsInfoByCategory(@RequestParam String petCategory) {
     	  Map<String, Object> response = new HashMap<>();
           
@@ -41,6 +41,10 @@ public class PetController {
         response.put("pet Info ", petInfoList);
 
         return response;
+    }
+    @GetMapping("/pets")
+    public Map<String, Object> getPetsInfoByCategoryAndGender(@RequestParam String petCategory) {
+        return petService.getPetsGroupedByNameAndGender(petCategory);
     }
     @GetMapping("/pets/byId")
     public PetInfoDTO getPetInfoById(@RequestParam Long petId) {
