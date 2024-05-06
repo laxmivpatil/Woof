@@ -62,26 +62,15 @@ public class PetService {
 	        for (Map.Entry<String, Map<String, Object>> entry : groupedPetsByNameAndGender.entrySet()) {
 	            Map<String, Object> petGroup = new HashMap<>();
 	            petGroup.put("pet_name", entry.getKey());
-	            if(entry.getValue().get("Male")!=null) {
+	            
 	            petGroup.put("male", entry.getValue().get("Male")); 
-	            }
-	            else
-	            {
-	            	 petGroup.put("male", ""); 
-	            	 // Assuming male pets are grouped under "Male"
-	            }
-	            if(entry.getValue().get("Female")!=null) {
-		            petGroup.put("female", entry.getValue().get("Female")); 
-		            }
-		            else
-		            {
-		            	 petGroup.put("female", ""); 
-		            	 // Assuming male pets are grouped under "Male"
-		            }
+	            
+	            petGroup.put("female", entry.getValue().get("Female")); 
+		            
 	             listOfPets.add(petGroup);
 	        }
 	        response.put("list_of_pets", listOfPets);
-
+                                                                  
 	        return response;
 	    }
 
