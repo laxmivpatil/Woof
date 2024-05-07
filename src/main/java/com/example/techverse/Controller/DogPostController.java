@@ -33,7 +33,7 @@ public class DogPostController {
 */
     @Autowired
     private UserRepository userRepository; // Assuming you have a UserRepository for managing users
-
+/*
     @PostMapping("/post")
     public ResponseEntity<?> postDogPost(
     		@RequestParam("user_id") String user_id,
@@ -148,5 +148,6 @@ public class DogPostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
         }
     }
+    */
 }
 

@@ -20,7 +20,7 @@ import com.example.techverse.Repository.UserRepository;
 
 @Service
 public class DogPostService {
-
+ /*
     @Autowired
     private DogPostRepository dogPostRepository;
     
@@ -43,12 +43,6 @@ public class DogPostService {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
         try {
-            // Check if the file's name contains invalid characters
-           /* if (fileName.contains("..")) {
-                throw new IOException("Invalid file name: " + fileName);
-            }
-*/
-            // Copy file to the target location
             String filePath = uploadDir + File.separator + fileName;
             File targetFile = new File(filePath);
             file.transferTo(targetFile);
@@ -69,14 +63,7 @@ public class DogPostService {
     	double roundedLatitude = Math.round(latitude * 1e6) / 1e6;
     	double roundedLongitude = Math.round(longitude * 1e6) / 1e6;
     	List<User> nearbyUsers=userRepository.findNearbyUsers(roundedLatitude, roundedLongitude, radius);
-        /*// Filter users based on their role (NGO or Hospital)
-        List<User> nearbyOrganizations = new ArrayList<>();
-        for (User user : nearbyUsers) {
-            if (user.getRole().equals(role)) {
-                nearbyOrganizations.add(user);
-            }
-        }*/
-
+         
         return nearbyUsers;
     } 
     public boolean notifyNearbyOrganizations( String userId,Long post_id,Double latitude,Double longitude) {
@@ -99,5 +86,7 @@ public class DogPostService {
       
         return true; // Placeholder, implement the actual notification logic.
     }
+    
+    */
 }
 

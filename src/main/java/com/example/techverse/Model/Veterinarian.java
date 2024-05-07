@@ -80,6 +80,22 @@ import javax.persistence.Table;
 	    
 	    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
 	    private List<Story> stories = new ArrayList<>();
+	    
+	    
+	    @OneToMany(mappedBy = "veterinarian")
+	    private Set<SavedRescueRequest> savedRescueRequests = new HashSet<>();
+	    
+	    
+	    
+	    
+		public Set<SavedRescueRequest> getSavedRescueRequests() {
+			return savedRescueRequests;
+		}
+
+		public void setSavedRescueRequests(Set<SavedRescueRequest> savedRescueRequests) {
+			this.savedRescueRequests = savedRescueRequests;
+		}
+
 		public Veterinarian() {
 			super();
 			// TODO Auto-generated constructor stub

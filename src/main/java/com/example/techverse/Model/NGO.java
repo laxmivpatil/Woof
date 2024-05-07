@@ -1,7 +1,9 @@
 package com.example.techverse.Model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -72,13 +74,39 @@ public class NGO {
     @OneToMany(mappedBy = "ngo", cascade = CascadeType.ALL)
     private List<Story> stories = new ArrayList<>();
     
-    
+    @OneToMany(mappedBy = "ngo")
+    private Set<SavedRescueRequest> savedRescueRequests = new HashSet<>();
+
 
     @OneToMany(mappedBy = "ngo", cascade = CascadeType.ALL)
     private List<AnimalRescueRequest> rescueRequests;
     
     
     
+	public List<Story> getStories() {
+		return stories;
+	}
+
+	public void setStories(List<Story> stories) {
+		this.stories = stories;
+	}
+
+	public Set<SavedRescueRequest> getSavedRescueRequests() {
+		return savedRescueRequests;
+	}
+
+	public void setSavedRescueRequests(Set<SavedRescueRequest> savedRescueRequests) {
+		this.savedRescueRequests = savedRescueRequests;
+	}
+
+	public List<AnimalRescueRequest> getRescueRequests() {
+		return rescueRequests;
+	}
+
+	public void setRescueRequests(List<AnimalRescueRequest> rescueRequests) {
+		this.rescueRequests = rescueRequests;
+	}
+
 	public NGO() {
 		super();
 		// TODO Auto-generated constructor stub

@@ -58,6 +58,19 @@ import javax.persistence.OneToMany;
     
     @Column(name="token")
     private String token;
+    
+    
+    @OneToMany(mappedBy = "user")
+    private Set<SavedRescueRequest> savedRescueRequests = new HashSet<>();
+
+
+	public Set<SavedRescueRequest> getSavedRescueRequests() {
+		return savedRescueRequests;
+	}
+
+	public void setSavedRescueRequests(Set<SavedRescueRequest> savedRescueRequests) {
+		this.savedRescueRequests = savedRescueRequests;
+	}
 
 	public User() {
 		super();
