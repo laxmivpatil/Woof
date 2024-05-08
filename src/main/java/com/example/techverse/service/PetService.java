@@ -47,7 +47,7 @@ public class PetService {
 	                                    Map<String, Object> petInfo = new HashMap<>();
 	                                    petInfo.put("id", pet.getId());
 	                                    petInfo.put("petName", pet.getPetName());
-	                                    petInfo.put("gender", pet.getGender());
+	                                    petInfo.put("gender", pet.getGender().toLowerCase());
 	                                    petInfo.put("description", pet.getDescription());
 	                                    petInfo.put("img1", pet.getImg1());
 	                                    petInfo.put("img2", pet.getImg2());
@@ -63,9 +63,18 @@ public class PetService {
 	            Map<String, Object> petGroup = new HashMap<>();
 	            petGroup.put("pet_name", entry.getKey());
 	            
-	            petGroup.put("male", entry.getValue().get("Male")); 
-	            
-	            petGroup.put("female", entry.getValue().get("Female")); 
+	          if(  entry.getValue().get("male")!=null) {
+	            petGroup.put("male", entry.getValue().get("male")); 
+	          }
+	          else {
+	        	  petGroup.put("male", entry.getValue().get("Male")); 
+	          }
+	          if(entry.getValue().get("female")!=null) {
+		            petGroup.put("female", entry.getValue().get("female")); 
+		          }
+		          else {
+		        	  petGroup.put("female", entry.getValue().get("Female")); 
+		          }
 		            
 	             listOfPets.add(petGroup);
 	        }
@@ -117,7 +126,6 @@ public class PetService {
 	        detailsMap.put("healthCare", monthlyDetails.getHealthCare());
 	        detailsMap.put("precautions", monthlyDetails.getPrecautions());
 	        detailsMap.put("pregnancyPrecautions", monthlyDetails.getPregnancyPrecautions());
-
 	        return detailsMap;
 	    }
 }

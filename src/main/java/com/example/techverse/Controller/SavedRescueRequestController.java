@@ -70,11 +70,21 @@ public class SavedRescueRequestController {
 		     response.put("message", "Animal rescue request not found");
 			 return ResponseEntity.ok(response);
 		 }
+		 
 		 SavedRescueRequest s=new SavedRescueRequest();
+		
+		 
 		 switch (entityType.toLowerCase()) {
         case "user":
             User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
-           
+            SavedRescueRequest existingSavedRequest = savedRescueRequestRepository.findByUserAndRescueRequestId(user, Long.parseLong(rescueId));
+
+		    if (existingSavedRequest != null) {
+		        response.put("success", false);
+		        response.put("message", "Rescue request already saved by the user");
+		        return ResponseEntity.ok(response);
+		    }
+		 
            s.setUser(user);
            s.setRescueRequest(animal.get());
             user.getSavedRescueRequests().add(s);
@@ -83,6 +93,14 @@ public class SavedRescueRequestController {
             break;
         case "ngo":
             NGO ngo = ngoRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+            SavedRescueRequest ngoSavedRequest = savedRescueRequestRepository.findByNgoAndRescueRequestId(ngo, Long.parseLong(rescueId));
+
+		    if (ngoSavedRequest != null) {
+		        response.put("success", false);
+		        response.put("message", "Rescue request already saved by the user");
+		        return ResponseEntity.ok(response);
+		    }
+		 
             s.setNgo(ngo);
             s.setRescueRequest(animal.get());
              ngo.getSavedRescueRequests().add(s);
@@ -91,6 +109,13 @@ public class SavedRescueRequestController {
             break;
         case "veterinarian":
             Veterinarian veterinarian = veterinarianRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+            SavedRescueRequest veterinarianSavedRequest = savedRescueRequestRepository.findByVeterinarianAndRescueRequestId(veterinarian, Long.parseLong(rescueId));
+
+		    if (veterinarianSavedRequest != null) {
+		        response.put("success", false);
+		        response.put("message", "Rescue request already saved by the user");
+		        return ResponseEntity.ok(response);
+		    }
             s.setVeterinarian(veterinarian);
             s.setRescueRequest(animal.get());
             veterinarian.getSavedRescueRequests().add(s);
