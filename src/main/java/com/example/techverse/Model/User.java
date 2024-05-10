@@ -14,7 +14,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id; 
 import javax.persistence.OrderColumn;
-import javax.persistence.Table; 
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -26,6 +29,7 @@ import javax.persistence.OneToMany;
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	 private Long id;
      
+	@JsonIgnore
 	  @ElementCollection
 	  @CollectionTable(name = "user_password_history", joinColumns = @JoinColumn(name = "user_id"))
 	    @Column(name = "password")
@@ -60,6 +64,7 @@ import javax.persistence.OneToMany;
     private String token;
     
     
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<SavedRescueRequest> savedRescueRequests = new HashSet<>();
 
@@ -196,6 +201,7 @@ import javax.persistence.OneToMany;
 		this.role = role;
 	}
 	
+	@JsonIgnore
 	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	    private List<AnimalRescueRequest> rescueRequests;
 
@@ -208,6 +214,7 @@ import javax.persistence.OneToMany;
 	}
 
 	
+	@JsonIgnore
 	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	    private List<Notification> notifications = new ArrayList<>();
 
@@ -244,6 +251,7 @@ import javax.persistence.OneToMany;
         this.notificationsEnabled = notificationsEnabled;
     }
 	
+	@JsonIgnore
 	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	    private List<Story> stories;
 	 
@@ -254,6 +262,8 @@ import javax.persistence.OneToMany;
 		public void setStories(List<Story> stories) {
 			this.stories = stories;
 		}
+		
+		@JsonIgnore	
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
         name = "user_story_followers",
@@ -286,6 +296,8 @@ import javax.persistence.OneToMany;
 
 		
 		// Define a many-to-many relationship for followers
+		
+		@JsonIgnore
 	    @ManyToMany
 	    @JoinTable(
 	        name = "follower_relationship",
@@ -318,6 +330,7 @@ import javax.persistence.OneToMany;
 	 
 		
 	    // Define a one-to-many relationship with comments
+		@JsonIgnore
 	    @OneToMany(mappedBy = "commenter")
 	    private List<Comment> comments;
 

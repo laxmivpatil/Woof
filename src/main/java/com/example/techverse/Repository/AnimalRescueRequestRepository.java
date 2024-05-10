@@ -25,3 +25,11 @@ public interface AnimalRescueRequestRepository extends JpaRepository<AnimalRescu
 	   
 }
 
+
+
+ 
+  
+ 
+ 
+ 
+

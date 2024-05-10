@@ -1,5 +1,6 @@
 package com.example.techverse.Controller;
  
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity; 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,9 +25,13 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.techverse.DistanceCalculator;
 import com.example.techverse.JwtUtil;
 import com.example.techverse.SmsSender;
+import com.example.techverse.DTO.AnimalRescueRequestDTO;
 import com.example.techverse.DTO.RegistrationDTO;
+import com.example.techverse.DTO.UserBasicInfoDTO;
+import com.example.techverse.Model.AnimalRescueRequest;
 import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.User;
 import com.example.techverse.Model.Veterinarian;
@@ -33,6 +39,7 @@ import com.example.techverse.Repository.NGORepository;
 import com.example.techverse.Repository.UserRepository;
 import com.example.techverse.Repository.VeterinarianRepository;
 import com.example.techverse.exception.FieldValidationException;
+import com.example.techverse.exception.UnauthorizedAccessException;
 import com.example.techverse.exception.UserAlreadyExistsException;
 import com.example.techverse.service.EmailService;
 import com.example.techverse.service.NGOService;
@@ -635,6 +642,46 @@ public class RegistrationController {
 		user.setOtp(otp + "");
 		user.setVerification("pending");
 	}
-
+	@GetMapping("/info/{entityType}/{entityId}")
+	public ResponseEntity<Map<String,Object>> getUserRescueRequests(
+			@RequestHeader("Authorization") String accessToken,@PathVariable String entityType, @PathVariable Long entityId
+			 ) throws IOException, UnauthorizedAccessException {
+		// Find the user based on the access token
+		 
+		Map<String, Object> response = new HashMap<String, Object>();
+		 
+		switch (entityType.toLowerCase()) {
+        case "user":
+            User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+            response.put("success", true);
+    		response.put("message", "user retrived successfully");
+    		response.put("entity", user);
+    		return ResponseEntity.ok(response);
+        
+        case "ngo":
+            NGO ngo = ngoRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+            response.put("success", true);
+    		response.put("message", "ngo retrived successfully");
+    		response.put("entity", ngo);
+    		return ResponseEntity.ok(response);
+             
+        case "veterinarian":
+            Veterinarian veterinarian = veterinarianRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+            response.put("success", true);
+    		response.put("message", "veterinarian retrived successfully");
+    		response.put("entity", veterinarian);
+    		return ResponseEntity.ok(response);
+             
+         
+    }
+		 
+		 
+ 
+		response.put("success", false);
+		response.put("message", "Entity with specified id not available");
+		 
+		return ResponseEntity.ok(response);
+	}
+	
 
 }

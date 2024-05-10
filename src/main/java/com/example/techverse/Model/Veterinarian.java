@@ -20,6 +20,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
  
 	@Table
 	@Entity
@@ -29,6 +31,8 @@ import javax.persistence.Table;
 		    @GeneratedValue(strategy = GenerationType.IDENTITY)
 		 private Long id;
 	     
+		   
+		   @JsonIgnore
 		  @ElementCollection
 		  @CollectionTable(name = "veterinarian_password_history", joinColumns = @JoinColumn(name = "veterinarian_id"))
 		    @Column(name = "password")
@@ -75,13 +79,17 @@ import javax.persistence.Table;
 	    private String veterinarianCertification;
 	    
 	    
+	    
+	    @JsonIgnore
 	    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
 	    private List<AnimalRescueRequest> rescueRequests;
 	    
+	    
+	    @JsonIgnore
 	    @OneToMany(mappedBy = "veterinarian", cascade = CascadeType.ALL)
 	    private List<Story> stories = new ArrayList<>();
 	    
-	    
+	    @JsonIgnore
 	    @OneToMany(mappedBy = "veterinarian")
 	    private Set<SavedRescueRequest> savedRescueRequests = new HashSet<>();
 	    
