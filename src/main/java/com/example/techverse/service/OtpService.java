@@ -33,17 +33,17 @@ public class OtpService {
 	 @Autowired
 	    private PasswordEncoder passwordEncoder;
 	    
-    @Value("${twilio.accountSid}")
-    private String accountSid;
+   // @Value("${twilio.accountSid}")
+    private String accountSid="AC5f95b80c20f80833cbdb2faae5debc59";
 
-    @Value("${twilio.authToken}")
-    private String authToken;
+   // @Value("${twilio.authToken}")
+    private String authToken="a6f4c99b490c5f85620fe49140cf7cde";
 
-    @Value("${twilio.phoneNumber}")
-    private String twilioPhoneNumber;
+   // @Value("${twilio.phoneNumber}")
+    private String twilioPhoneNumber="+12139854075";
 
-    @Value("${twilio.phone-number}")
-    private String twilioWhatsappNumber;
+  //  @Value("${twilio.phone-number}")
+    private String twilioWhatsappNumber="+14155238886";
    
     public String generateOtp() {
         // Generate a 6-digit random OTP

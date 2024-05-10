@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -182,6 +183,72 @@ public class SavedRescueRequestController {
         response.put("success", true);
         response.put("message", "Saved rescue requests retrieved successfully");
         response.put("saved_post", dto1);
+        return ResponseEntity.ok(response);
+    }
+    @DeleteMapping("/unsave_rescue_requests/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, Object>> unsaveRescueRequest(
+            @RequestHeader("Authorization") String accessToken, @PathVariable String entityType, @PathVariable Long entityId,
+            @RequestParam("rescueId") String rescueId)throws IOException, UnauthorizedAccessException {
+        // Find the user based on the access token
+        Map<String, Object> response = new HashMap<>();
+
+        switch (entityType.toLowerCase()) {
+            case "user":
+                User user = userRepository.findById(entityId)
+                        .orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+                SavedRescueRequest existingSavedRequestByUser = savedRescueRequestRepository
+                        .findByUserAndRescueRequestId(user, Long.parseLong(rescueId));
+
+                if (existingSavedRequestByUser == null) {
+                    response.put("success", false);
+                    response.put("message", "Rescue request is not saved by the user");
+                    return ResponseEntity.ok(response);
+                }
+
+                user.getSavedRescueRequests().remove(existingSavedRequestByUser);
+                userRepository.save(user);
+                savedRescueRequestRepository.delete(existingSavedRequestByUser);
+                break;
+            case "ngo":
+                NGO ngo = ngoRepository.findById(entityId)
+                        .orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+                SavedRescueRequest existingSavedRequestByNGO = savedRescueRequestRepository
+                        .findByNgoAndRescueRequestId(ngo, Long.parseLong(rescueId));
+
+                if (existingSavedRequestByNGO == null) {
+                    response.put("success", false);
+                    response.put("message", "Rescue request is not saved by the NGO");
+                    return ResponseEntity.ok(response);
+                }
+
+                ngo.getSavedRescueRequests().remove(existingSavedRequestByNGO);
+                ngoRepository.save(ngo);
+                savedRescueRequestRepository.delete(existingSavedRequestByNGO);
+                break;
+            case "veterinarian":
+                Veterinarian veterinarian = veterinarianRepository.findById(entityId)
+                        .orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+                SavedRescueRequest existingSavedRequestByVet = savedRescueRequestRepository
+                        .findByVeterinarianAndRescueRequestId(veterinarian, Long.parseLong(rescueId));
+
+                if (existingSavedRequestByVet == null) {
+                    response.put("success", false);
+                    response.put("message", "Rescue request is not saved by the veterinarian");
+                    return ResponseEntity.ok(response);
+                }
+
+                veterinarian.getSavedRescueRequests().remove(existingSavedRequestByVet);
+                veterinarianRepository.save(veterinarian);
+                savedRescueRequestRepository.delete(existingSavedRequestByVet);
+                break;
+            default:
+                response.put("success", false);
+                response.put("message", "Invalid entity type");
+                return ResponseEntity.ok(response);
+        }
+
+        response.put("success", true);
+        response.put("message", "Rescue request unsaved successfully");
         return ResponseEntity.ok(response);
     }
 
