@@ -263,5 +263,70 @@ public class RescueRequestController {
 		return new ResponseEntity<>(userRescueRequests, HttpStatus.OK);
 	}
 	*/
+	@GetMapping("/own_rescue_requests/{entityType}/{entityId}")
+	public ResponseEntity<Map<String, Object>> getRescueRequests(
+	        @RequestHeader("Authorization") String accessToken, @PathVariable String entityType, @PathVariable Long entityId,
+	        @RequestParam("lat") String latitude, @RequestParam("long") String longitude) throws IOException, UnauthorizedAccessException {
+	    // Find the user/NGO/veterinarian based on the access token
+	    double lan = Double.parseDouble(latitude);
+	    double lon = Double.parseDouble(longitude);
+	    Map<String, Object> response = new HashMap<>();
+	    double roundedLatitude = Math.round(lan * 1e6) / 1e6;
+	    double roundedLongitude = Math.round(lon * 1e6) / 1e6;
+
+	    List<AnimalRescueRequestDTO> dtoList = new ArrayList<>();
+
+	    switch (entityType.toLowerCase()) {
+	        case "user":
+	            User user = userRepository.findById(entityId)
+	                    .orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+
+	            // Retrieve rescue requests posted by the user
+	            List<AnimalRescueRequest> userRescueRequests = rescueRequestRepository.findByUserOrderByDatetimeDesc(user);
+	            for (AnimalRescueRequest request : userRescueRequests) {
+	                AnimalRescueRequestDTO a = animalRescueRequestService.mapToDTO(request);
+	                double distance = DistanceCalculator.calculateDistance(lan, lon, request.getLatitude(), request.getLongitude());
+	                a.setDistance(distance);
+	                dtoList.add(a);
+	            }
+	            break;
+	        case "ngo":
+	            NGO ngo = NgoRepository.findById(entityId)
+	                    .orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+
+	            // Retrieve rescue requests associated with the NGO
+	            List<AnimalRescueRequest> ngoRescueRequests = rescueRequestRepository.findByNgoOrderByDatetimeDesc(ngo);
+	            for (AnimalRescueRequest request : ngoRescueRequests) {
+	                AnimalRescueRequestDTO a = animalRescueRequestService.mapToDTO(request);
+	                double distance = DistanceCalculator.calculateDistance(lan, lon, request.getLatitude(), request.getLongitude());
+	                a.setDistance(distance);
+	                dtoList.add(a);
+	            }
+	            break;
+	        case "veterinarian":
+	            Veterinarian veterinarian = veterinarianRepository.findById(entityId)
+	                    .orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+
+	            // Retrieve rescue requests associated with the veterinarian
+	            List<AnimalRescueRequest> vetRescueRequests = rescueRequestRepository.findByVeterinarianOrderByDatetimeDesc(veterinarian);
+	            for (AnimalRescueRequest request : vetRescueRequests) {
+	                AnimalRescueRequestDTO a = animalRescueRequestService.mapToDTO(request);
+	                double distance = DistanceCalculator.calculateDistance(lan, lon, request.getLatitude(), request.getLongitude());
+	                a.setDistance(distance);
+	                dtoList.add(a);
+	            }
+	            break;
+	        default:
+	            response.put("success", false);
+	            response.put("message", "Invalid entity type");
+	            return ResponseEntity.ok(response);
+	    }
+
+	    response.put("success", true);
+	    response.put("message", "Rescue requests retrieved successfully");
+	    response.put("requests", dtoList);
+	    return ResponseEntity.ok(response);
+	}
+
 	 
 }
