@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -249,5 +251,70 @@ public class PetController {
 
         return ResponseEntity.status(status).body(response);
     }
+    
+    
+    
+    @DeleteMapping("/savepets/{entityType}/{entityId}")
+    public Map<String, Object> unsavepets(@RequestHeader("Authorization") String accessToken,@PathVariable String entityType, @PathVariable Long entityId,
+    		@RequestParam String petCategory,@RequestParam String petName) throws UnauthorizedAccessException {
+    	  Map<String, Object> response = new HashMap<>();
+    	List<Pet> pets=petRepository.findAllByPetNameAndPetCategory(petName, petCategory);
+    	if(pets.isEmpty())
+    	{
+    		response.put("message ", "no pet saved yet");
+    		response.put("status", false);
+    		return response;
+    	}
+    	switch (entityType.toLowerCase()) {
+        case "user":
+            User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+            for(Pet p:pets) {
+            	if(user.getSavedPets().contains(p))
+            	{
+            		user.getSavedPets().remove(p);
+            	}
+             
+            	
+            	 userRepository.save(user);
+            }
+            break;
+        case "ngo":
+            NGO ngo = NgoRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+            for(Pet p:pets) {
+            	if(ngo .getSavedPets().contains(p))
+            	{
+            		ngo.getSavedPets().remove(p);
+            	}
+             
+            	
+            	NgoRepository.save(ngo);
+            }
+            break;
+        case "veterinarian":
+            Veterinarian veterinarian = veterinarianRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+            for(Pet p:pets) {
+            	if(veterinarian.getSavedPets().contains(p))
+            	{
+            		veterinarian.getSavedPets().remove(p);
+            	}
+             
+            	
+            	veterinarianRepository.save(veterinarian);
+            }
+            break;
+            
+            
+         
+    }
+    	
+    	response.put("message ", "Pet UnSaved done ");
+		response.put("status", true);
+		return response;
+        
+    }
+    
+    
+    
+    
 
 }
