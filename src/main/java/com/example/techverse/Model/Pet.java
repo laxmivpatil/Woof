@@ -1,8 +1,13 @@
 package com.example.techverse.Model;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Entity
 public class Pet {
@@ -29,9 +34,15 @@ public class Pet {
     private List<MonthlyDetails> monthlyDetails;
     // Constructors, getters, and setters
 
-   
-    
      
+    @ManyToMany(mappedBy = "savedPets")
+    private Set<User> users = new HashSet<>();
+
+    @ManyToMany(mappedBy = "savedPets")
+    private Set<NGO> ngos = new HashSet<>();
+
+    @ManyToMany(mappedBy = "savedPets")
+    private Set<Veterinarian> veterinarians = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -113,10 +124,8 @@ public class Pet {
 		this.monthlyDetails = monthlyDetails;
 	}
 
-	
+	 
 
-    
-    
-    
-    // Add other getters and setters
+
+
 }

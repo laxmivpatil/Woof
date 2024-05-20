@@ -34,14 +34,14 @@ public class StorageService {
  
 
 	 
-	 @Value("${azure.storage.account-name}")
-	    private String storageAccountName;
+	// @Value("${azure.storage.account-name}")
+	    private String storageAccountName="satyaprofilestorage";
 
-	    @Value("${azure.storage.container-string}")
-	    private String container_string;
+	   // @Value("${azure.storage.container-string}")
+	    private String container_string="DefaultEndpointsProtocol=https;AccountName=satyaprofilestorage;AccountKey=TRfxdipcJMaK5LMJPmv9z5Xmzj/34I5eKI/p/pTyrnOaqZKSlPQnPS4RA1b7n5tK5ml9BAcA7+B0+ASt4ObNkw==;EndpointSuffix=core.windows.net";
 
-	    @Value("${azure.storage.container-name}")
-	    private String containerName;
+	   // @Value("${azure.storage.container-name}")
+	    private String containerName="container";
    /* @Value("${application.bucket.name}")
     private String bucketName;
 

@@ -93,9 +93,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 	    @OneToMany(mappedBy = "veterinarian")
 	    private Set<SavedRescueRequest> savedRescueRequests = new HashSet<>();
 	    
+	    @JsonIgnore
+	    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	    @JoinTable(
+	            name = "veterinarian_saved_pets",
+	            joinColumns = @JoinColumn(name = "veterinarian_id"),
+	            inverseJoinColumns = @JoinColumn(name = "pet_id")
+	    )
+	    private Set<Pet> savedPets = new HashSet<>();
 	    
 	    
 	    
+	    
+	    
+		public Set<Pet> getSavedPets() {
+			return savedPets;
+		}
+
+		public void setSavedPets(Set<Pet> savedPets) {
+			this.savedPets = savedPets;
+		}
+
 		public Set<SavedRescueRequest> getSavedRescueRequests() {
 			return savedRescueRequests;
 		}

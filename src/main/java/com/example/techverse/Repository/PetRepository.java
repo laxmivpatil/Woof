@@ -9,5 +9,8 @@ import com.example.techverse.Model.Pet;
 public interface PetRepository extends JpaRepositoryImplementation<Pet, Long> {
 
 	List<Pet> findByPetCategory(String petCategory);
-	 List<Pet> findByPetCategoryIgnoreCase(String petCategory);
+	
+	List<Pet> findByPetCategoryIgnoreCase(String petCategory);
+	 
+	 List<Pet> findAllByPetNameAndPetCategory(String name, String category);
 }

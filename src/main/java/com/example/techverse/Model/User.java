@@ -68,6 +68,16 @@ import javax.persistence.OneToMany;
     @OneToMany(mappedBy = "user")
     private Set<SavedRescueRequest> savedRescueRequests = new HashSet<>();
 
+   
+    
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "user_saved_pets",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "pet_id")
+    )
+    private Set<Pet> savedPets = new HashSet<>();
+
 
 	public Set<SavedRescueRequest> getSavedRescueRequests() {
 		return savedRescueRequests;
@@ -394,6 +404,14 @@ public User(String email,String phone,String password,String fullname,String rol
 	this.password=password;
 	this.fullName=fullname;
 	this.role=role;
+}
+
+public Set<Pet> getSavedPets() {
+	return savedPets;
+}
+
+public void setSavedPets(Set<Pet> savedPets) {
+	this.savedPets = savedPets;
 }
 	    
 	    

@@ -14,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
@@ -87,8 +89,27 @@ public class NGO {
     @OneToMany(mappedBy = "ngo", cascade = CascadeType.ALL)
     private List<AnimalRescueRequest> rescueRequests;
     
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "ngo_saved_pets",
+            joinColumns = @JoinColumn(name = "ngo_id"),
+            inverseJoinColumns = @JoinColumn(name = "pet_id")
+    )
+    private Set<Pet> savedPets = new HashSet<>();
     
     
+    
+    
+    
+	public Set<Pet> getSavedPets() {
+		return savedPets;
+	}
+
+	public void setSavedPets(Set<Pet> savedPets) {
+		this.savedPets = savedPets;
+	}
+
 	public List<Story> getStories() {
 		return stories;
 	}
