@@ -23,9 +23,11 @@ import com.example.techverse.Repository.VeterinarianRepository;
 import com.example.techverse.exception.UnauthorizedAccessException;
 import com.example.techverse.service.PetService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/pet-categories")
@@ -141,4 +143,111 @@ public class PetController {
 		return response;
         
     }
+    
+    
+    
+    
+    
+    @GetMapping("/savepets/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, Object>> getSavedPetsByUser(@RequestHeader("Authorization") String accessToken,@PathVariable String entityType, @PathVariable Long entityId)
+     {
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK; // Default status
+
+        try {
+            
+            
+            
+            
+            
+        	List<Pet> savedPets =new ArrayList<>();
+            switch (entityType.toLowerCase()) {
+            case "user":
+                User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+                savedPets = new ArrayList<>(user.getSavedPets());
+                 response.put("message", "Saved pets retrieved successfully");
+                break;
+            case "ngo":
+                NGO ngo = NgoRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+                
+                savedPets = new ArrayList<>(ngo.getSavedPets());
+                 response.put("message", "Saved pets retrieved successfully");
+                break;
+            case "veterinarian":
+                Veterinarian veterinarian = veterinarianRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+                savedPets = new ArrayList<>(veterinarian.getSavedPets());
+                 response.put("message", "Saved pets retrieved successfully");
+                break;
+                
+                
+             
+        }
+        	
+            
+            Map<String, Map<String, Object>> groupedPetsByNameAndGender = savedPets.stream()
+	                .collect(Collectors.groupingBy(
+	                        Pet::getPetName,
+	                        Collectors.toMap(
+	                                Pet::getGender,
+	                                pet -> {
+	                                    Map<String, Object> petInfo = new HashMap<>();
+	                                    petInfo.put("id", pet.getId());
+	                                    petInfo.put("petName", pet.getPetName());
+	                                    petInfo.put("gender", pet.getGender().toLowerCase());
+	                                    petInfo.put("description", pet.getDescription());
+	                                    petInfo.put("img1", pet.getImg1());
+	                                    petInfo.put("img2", pet.getImg2());
+	                                    petInfo.put("img3", pet.getImg3());
+	                                    return petInfo;
+	                                }
+	                        )
+	                ));
+
+	          List<Map<String, Object>> listOfPets = new ArrayList<>();
+	        for (Map.Entry<String, Map<String, Object>> entry : groupedPetsByNameAndGender.entrySet()) {
+	            Map<String, Object> petGroup = new HashMap<>();
+	            petGroup.put("pet_name", entry.getKey());
+	            
+	          if(  entry.getValue().get("male")!=null) {
+	            petGroup.put("male", entry.getValue().get("male")); 
+	          }
+	          else {
+	        	  petGroup.put("male", entry.getValue().get("Male")); 
+	          }
+	          if(entry.getValue().get("female")!=null) {
+		            petGroup.put("female", entry.getValue().get("female")); 
+		          }
+		          else {
+		        	  petGroup.put("female", entry.getValue().get("Female")); 
+		          }
+		            
+	             listOfPets.add(petGroup);
+	        }
+	        response.put("list_of_pets", listOfPets);
+                                                                  
+	         
+            
+            
+            
+        	 
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+            
+            
+            
+            
+            
+            
+        } catch (UnauthorizedAccessException e) {
+            response.put("message", e.getMessage());
+            response.put("status", false);
+            status = HttpStatus.NOT_FOUND;
+        } catch (Exception e) {
+            response.put("message", "Error occurred: " + e.getMessage());
+            response.put("status", false);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return ResponseEntity.status(status).body(response);
+    }
+
 }

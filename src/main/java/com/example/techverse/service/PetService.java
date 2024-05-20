@@ -78,6 +78,13 @@ public class PetService {
 		            
 	             listOfPets.add(petGroup);
 	        }
+	        
+	        
+	        
+	        
+	        
+	        
+	        
 	        response.put("list_of_pets", listOfPets);
                                                                   
 	        return response;
