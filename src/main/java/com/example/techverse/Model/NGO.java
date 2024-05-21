@@ -90,6 +90,7 @@ public class NGO {
     private List<AnimalRescueRequest> rescueRequests;
     
 
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "ngo_saved_pets",

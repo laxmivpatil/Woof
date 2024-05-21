@@ -69,7 +69,7 @@ import javax.persistence.OneToMany;
     private Set<SavedRescueRequest> savedRescueRequests = new HashSet<>();
 
    
-    
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "user_saved_pets",
