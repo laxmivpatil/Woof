@@ -186,57 +186,57 @@ public class PetController {
         }
         	
             
-            Map<String, Map<String, Object>> groupedPetsByNameAndGender = savedPets.stream()
-	                .collect(Collectors.groupingBy(
-	                        Pet::getPetName,
-	                        Collectors.toMap(
-	                                Pet::getGender,
-	                                pet -> {
-	                                    Map<String, Object> petInfo = new HashMap<>();
-	                                    petInfo.put("id", pet.getId());
-	                                    petInfo.put("petName", pet.getPetName());
-	                                    petInfo.put("gender", pet.getGender().toLowerCase());
-	                                    petInfo.put("description", pet.getDescription());
-	                                    petInfo.put("img1", pet.getImg1());
-	                                    petInfo.put("img2", pet.getImg2());
-	                                    petInfo.put("img3", pet.getImg3());
-	                                    return petInfo;
-	                                }
-	                        )
-	                ));
+            Map<String, Map<String, Map<String, Object>>> groupedPetsByNameGenderAndCategory = savedPets.stream()
+            	    .collect(Collectors.groupingBy(
+            	        Pet::getPetName,
+            	        Collectors.groupingBy(
+            	            Pet::getPetCategory,
+            	            Collectors.toMap(
+            	                Pet::getGender,
+            	                pet -> {
+            	                    Map<String, Object> petInfo = new HashMap<>();
+            	                    petInfo.put("id", pet.getId());
+            	                    petInfo.put("petName", pet.getPetName());
+            	                    petInfo.put("category", pet.getPetCategory());
+            	                    petInfo.put("gender", pet.getGender().toLowerCase());
+            	                    petInfo.put("description", pet.getDescription());
+            	                    petInfo.put("img1", pet.getImg1());
+            	                    petInfo.put("img2", pet.getImg2());
+            	                    petInfo.put("img3", pet.getImg3());
+            	                    return petInfo;
+            	                }
+            	            )
+            	        )
+            	    ));
 
-	          List<Map<String, Object>> listOfPets = new ArrayList<>();
-	        for (Map.Entry<String, Map<String, Object>> entry : groupedPetsByNameAndGender.entrySet()) {
-	            Map<String, Object> petGroup = new HashMap<>();
-	            petGroup.put("pet_name", entry.getKey());
-	            
-	          if(  entry.getValue().get("male")!=null) {
-	            petGroup.put("male", entry.getValue().get("male")); 
-	          }
-	          else {
-	        	  petGroup.put("male", entry.getValue().get("Male")); 
-	          }
-	          if(entry.getValue().get("female")!=null) {
-		            petGroup.put("female", entry.getValue().get("female")); 
-		          }
-		          else {
-		        	  petGroup.put("female", entry.getValue().get("Female")); 
-		          }
-		            
-	             listOfPets.add(petGroup);
-	        }
-	        response.put("list_of_pets", listOfPets);
-                                                                  
-	         
-            
-            
-            
-        	 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-            
-            
-            
-            
+            	List<Map<String, Object>> listOfPets = new ArrayList<>();
+            	for (Map.Entry<String, Map<String, Map<String, Object>>> entry : groupedPetsByNameGenderAndCategory.entrySet()) {
+            	    Map<String, Object> petGroup = new HashMap<>();
+            	    petGroup.put("pet_name", entry.getKey());
+
+            	    for (Map.Entry<String, Map<String, Object>> categoryEntry : entry.getValue().entrySet()) {
+            	        String category = categoryEntry.getKey();
+            	        petGroup.put("category", category);
+
+            	        if (categoryEntry.getValue().get("male") != null) {
+            	            petGroup.put("male", categoryEntry.getValue().get("male"));
+            	        } else {
+            	            petGroup.put("male", categoryEntry.getValue().get("Male"));
+            	        }
+
+            	        if (categoryEntry.getValue().get("female") != null) {
+            	            petGroup.put("female", categoryEntry.getValue().get("female"));
+            	        } else {
+            	            petGroup.put("female", categoryEntry.getValue().get("Female"));
+            	        }
+            	    }
+
+            	    listOfPets.add(petGroup);
+            	}
+            	response.put("list_of_pets", listOfPets);
+
+            	return ResponseEntity.status(HttpStatus.OK).body(response);
+
             
             
         } catch (UnauthorizedAccessException e) {
