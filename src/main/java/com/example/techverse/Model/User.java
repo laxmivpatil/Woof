@@ -68,6 +68,8 @@ import javax.persistence.OneToMany;
     @OneToMany(mappedBy = "user")
     private Set<SavedRescueRequest> savedRescueRequests = new HashSet<>();
 
+     
+    
    
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

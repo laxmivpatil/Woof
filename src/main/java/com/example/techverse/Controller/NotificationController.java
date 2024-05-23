@@ -43,14 +43,22 @@ public class NotificationController {
     }
 
     // Retrieve User Notifications all include read notification(all)
-    @GetMapping("/user/{user_id}/notificationsall")
-    public ResponseEntity<Map<String, Object>> getUserNotificationsall(@PathVariable("user_id") Long userId) {
+    @GetMapping("/notificationsall/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, Object>> getUserNotificationsall(@PathVariable("entityId") Long entityId,@PathVariable("entityType") String entityType) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         List<NotificationDTO> notificationList=new ArrayList<>();
-
+        List<Notification> notifications=new ArrayList<>();
         try {
-            List<Notification> notifications = notificationService.getUserNotifications(userId);
+        	if(entityType.equalsIgnoreCase("user")) {
+              notifications = notificationService.getUserNotifications(entityId);
+        	}
+        	else if(entityType.equalsIgnoreCase("ngo")) {
+                 notifications = notificationService.getNgoNotifications(entityId);
+            	}
+        	else if(entityType.equalsIgnoreCase("veterinarian")) {
+                      notifications = notificationService.getVeterinarianNotifications(entityId);
+                	}
             for(Notification n:notifications) {
             	
             	notificationList.add( toDTO(n));

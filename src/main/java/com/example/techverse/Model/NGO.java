@@ -99,10 +99,22 @@ public class NGO {
     )
     private Set<Pet> savedPets = new HashSet<>();
     
+    @JsonIgnore
+    @OneToMany(mappedBy = "ngo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications;
     
     
     
     
+    
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
+	}
+
 	public Set<Pet> getSavedPets() {
 		return savedPets;
 	}

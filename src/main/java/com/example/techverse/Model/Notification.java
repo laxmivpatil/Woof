@@ -15,11 +15,26 @@ public class Notification {
 
     private String message;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-     @JoinColumn(name = "user_id")
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "ngo_id", nullable = true)
+    private NGO ngo;
+
+    @ManyToOne
+    @JoinColumn(name = "veterinarian_id", nullable = true)
+    private Veterinarian veterinarian;
     private LocalDateTime timestamp;
+    
+    
+    @ManyToOne
+    @JoinColumn(name = "rescue_request_id", nullable = true)
+    private AnimalRescueRequest rescueRequest;
+    
+    private String rescuepostby;
 
     @Column(name = "is_read")
     private boolean isRead;
@@ -29,12 +44,39 @@ public class Notification {
     public Notification() {
     }
 
+    public Notification(User user, String message, LocalDateTime timestamp, boolean isRead,AnimalRescueRequest rescueRequest) {
+        this.user = user;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.isRead = isRead;
+        this.rescueRequest=rescueRequest;
+        
+    }
+
+    public Notification(NGO ngo, String message, LocalDateTime timestamp, boolean isRead,AnimalRescueRequest rescueRequest) {
+        this.ngo = ngo;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.isRead = isRead;
+         
+        this.rescueRequest=rescueRequest;
+    }
+
+    public Notification(Veterinarian veterinarian, String message, LocalDateTime timestamp, boolean isRead,AnimalRescueRequest rescueRequest) {
+        this.veterinarian = veterinarian;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.isRead = isRead;
+         
+        this.rescueRequest=rescueRequest;
+    }
     public Notification(NotificationType type, String message, User user) {
         this.type = type;
         this.message = message;
         this.user = user;
         this.timestamp = LocalDateTime.now();
         this.isRead = false;
+ 
     }
 
     // Getters and setters...
@@ -43,7 +85,15 @@ public class Notification {
         return id;
     }
 
-    public void setId(Long id) {
+    public String getRescuepostby() {
+		return rescuepostby;
+	}
+
+	public void setRescuepostby(String rescuepostby) {
+		this.rescuepostby = rescuepostby;
+	}
+
+	public void setId(Long id) {
         this.id = id;
     }
 
@@ -119,4 +169,31 @@ public class Notification {
 	public void setNotificationsEnabled(Boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
+
+	public NGO getNgo() {
+		return ngo;
+	}
+
+	public void setNgo(NGO ngo) {
+		this.ngo = ngo;
+	}
+
+	public Veterinarian getVeterinarian() {
+		return veterinarian;
+	}
+
+	public void setVeterinarian(Veterinarian veterinarian) {
+		this.veterinarian = veterinarian;
+	}
+
+	public AnimalRescueRequest getRescueRequest() {
+		return rescueRequest;
+	}
+
+	public void setRescueRequest(AnimalRescueRequest rescueRequest) {
+		this.rescueRequest = rescueRequest;
+	}
+	
+	
+	
 }

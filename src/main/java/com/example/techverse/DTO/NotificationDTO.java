@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import com.example.techverse.Model.Notification;
 import com.example.techverse.Model.NotificationType;
 import com.example.techverse.Model.User;
+import com.example.techverse.service.TimeDifferenceUtil;
 
 public class NotificationDTO {
 	 
@@ -27,8 +28,14 @@ public class NotificationDTO {
 
 	    
 	    private LocalDateTime timestamp;
+	    private String timediff;
 
 	     private boolean isRead;
+	     
+	     private Long rescueId;
+	     private String profile;
+	     
+	     
 
 	    // Constructors, getters, setters, and other methods...
 
@@ -40,6 +47,19 @@ public class NotificationDTO {
 	         
 	        this.timestamp = notification.getTimestamp();
 	        this.isRead = notification.isRead();
+	       this.rescueId=notification.getRescueRequest().getId();
+	       if(notification.getRescuepostby().equals("user")) {
+	        this.profile=notification.getRescueRequest().getUser().getProfile();
+	       }
+	       else if(notification.getRescuepostby().equals("ngo")) {
+		        this.profile=notification.getRescueRequest().getNgo().getNGOProfile();
+		       }
+	       else if(notification.getRescuepostby().equals("veterinarian")) {
+		        this.profile=notification.getRescueRequest().getVeterinarian().getVeterinarianProfile();
+		       }
+	       
+	       this.timediff=TimeDifferenceUtil.formatTimeDifference(notification.getRescueRequest().getDatetime(),timestamp);
+	       
 	    }
 
 	    // Getters and setters...
@@ -84,6 +104,30 @@ public class NotificationDTO {
 	    public void setRead(boolean read) {
 	        this.isRead = read;
 	    }
+
+		public Long getRescueId() {
+			return rescueId;
+		}
+
+		public void setRescueId(Long rescueId) {
+			this.rescueId = rescueId;
+		}
+
+		public String getTimediff() {
+			return timediff;
+		}
+
+		public void setTimediff(String timediff) {
+			this.timediff = timediff;
+		}
+
+		public String getProfile() {
+			return profile;
+		}
+
+		public void setProfile(String profile) {
+			this.profile = profile;
+		}
 
 	    // Override toString() method...
 

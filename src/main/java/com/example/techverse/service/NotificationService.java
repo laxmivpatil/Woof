@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.techverse.DTO.UpdateNotificationSettingsRequest;
+import com.example.techverse.Model.AnimalRescueRequest;
+import com.example.techverse.Model.NGO;
 import com.example.techverse.Model.Notification;
 import com.example.techverse.Model.NotificationType;
 import com.example.techverse.Model.User;
+import com.example.techverse.Model.Veterinarian;
 import com.example.techverse.Repository.NotificationRepository;
 import com.example.techverse.Repository.UserRepository;
 
@@ -23,9 +26,36 @@ public class NotificationService {
     @Autowired
     private UserRepository userRepository;
     
+    
+    
+    public Notification sendNotificationToUser(User user, String message,AnimalRescueRequest rescueRequest) {
+        Notification notification = new Notification(user, message, LocalDateTime.now(), false,rescueRequest);
+        return notificationRepository.save(notification);
+    }
+
+    public Notification sendNotificationToNGO(NGO ngo, String message,AnimalRescueRequest rescueRequest) {
+        Notification notification = new Notification(ngo, message, LocalDateTime.now(), false,rescueRequest);
+        return notificationRepository.save(notification);
+    }
+
+    public Notification sendNotificationToVeterinarian(Veterinarian veterinarian, String message,AnimalRescueRequest rescueRequest) {
+        Notification notification = new Notification(veterinarian, message, LocalDateTime.now(), false,rescueRequest);
+       return  notificationRepository.save(notification);
+    }
+    
+    
     public List<Notification> getUserNotifications(Long userId) {
         return notificationRepository.findByUserIdOrderByTimestampDesc(userId);
     }
+    public List<Notification> getNgoNotifications(Long userId) {
+        return notificationRepository.findByNgoIdOrderByTimestampDesc(userId);
+    }
+    public List<Notification> getVeterinarianNotifications(Long userId) {
+        return notificationRepository.findByVeterinarianIdOrderByTimestampDesc(userId);
+    }
+    
+    
+    //
 
     public boolean markNotificationAsRead(Long userId, Long notificationId) {
         Optional<Notification> notificationOptional = notificationRepository.findById(notificationId);

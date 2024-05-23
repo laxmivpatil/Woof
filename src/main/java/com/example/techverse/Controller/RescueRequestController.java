@@ -11,16 +11,19 @@ import com.example.techverse.DTO.AnimalRescueRequestDTO;
 import com.example.techverse.DTO.RegistrationDTO;
 import com.example.techverse.Model.AnimalRescueRequest;
 import com.example.techverse.Model.NGO;
+import com.example.techverse.Model.Notification;
 import com.example.techverse.Model.Photo;
 import com.example.techverse.Model.User;
 import com.example.techverse.Model.Veterinarian;
 import com.example.techverse.Repository.AnimalRescueRequestRepository;
 import com.example.techverse.Repository.NGORepository;
+import com.example.techverse.Repository.NotificationRepository;
 import com.example.techverse.Repository.PhotoRepository;
 import com.example.techverse.Repository.UserRepository;
 import com.example.techverse.Repository.VeterinarianRepository;
 import com.example.techverse.exception.UnauthorizedAccessException;
 import com.example.techverse.service.AnimalRescueRequestService;
+import com.example.techverse.service.NotificationService;
 import com.example.techverse.service.StorageService;
 
 import java.io.IOException;
@@ -52,7 +55,14 @@ public class RescueRequestController {
 	private final PhotoRepository photoRepository;
 	
 	@Autowired
+	private NotificationRepository notificationRepository;
+	
+	@Autowired
     private AnimalRescueRequestService  animalRescueRequestService;
+	
+	
+	@Autowired
+	private NotificationService notificationService;
 
 	@Autowired
 	private VeterinarianRepository veterinarianRepository;
@@ -89,6 +99,8 @@ public class RescueRequestController {
         // Set the time zone to GMT+5:30 (India Standard Time)
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");
         LocalDateTime dateTimeInIndia = dateTime.atZone(zoneId).toLocalDateTime();
+        String message = "A new rescue request has been created at " + location ;
+
 		switch (entityType.toLowerCase()) {
 		case "user":
 			User user = userRepository.findById(entityId)
@@ -174,14 +186,42 @@ public class RescueRequestController {
 		List<Veterinarian> nearbyVeterinarian = veterinarianRepository.findNearbyVeterinarian(roundedLatitude,
 				roundedLongitude, 5.0);
 		List<RegistrationDTO> registrationDTOs = new ArrayList<>();
-		for (NGO ngo : nearbyNGO) {
-			RegistrationDTO dto = new RegistrationDTO();
-			registrationDTOs.add(dto.toDTO(ngo));
-		}
-		for (Veterinarian v : nearbyVeterinarian) {
-			RegistrationDTO dto = new RegistrationDTO();
-			registrationDTOs.add(dto.toDTO(v));
-		}
+		for (NGO nearbyNgo : nearbyNGO) {
+	        if (!entityType.equalsIgnoreCase("ngo")) { // Avoid sending notification to the same NGO
+	            RegistrationDTO dto = new RegistrationDTO();
+	            registrationDTOs.add(dto.toDTO(nearbyNgo));
+	            Notification n=notificationService.sendNotificationToNGO(nearbyNgo, message,rescueRequest);
+	            n.setRescuepostby(entityType);
+	            notificationRepository.save(n);
+	        }
+	        else if(!nearbyNgo.getId().equals(entityId)) {
+	        	RegistrationDTO dto = new RegistrationDTO();
+	            registrationDTOs.add(dto.toDTO(nearbyNgo));
+	            Notification n=notificationService.sendNotificationToNGO(nearbyNgo, message,rescueRequest);
+	            n.setRescuepostby(entityType);
+	            notificationRepository.save(n);
+	        }
+	    }
+
+	    for (Veterinarian nearbyVet : nearbyVeterinarian) {
+	        if ( !entityType.equalsIgnoreCase("veterinarian")) { // Avoid sending notification to the same Veterinarian
+	            RegistrationDTO dto = new RegistrationDTO();
+	            registrationDTOs.add(dto.toDTO(nearbyVet));
+	            Notification n= notificationService.sendNotificationToVeterinarian(nearbyVet, message,rescueRequest);
+	            n.setRescuepostby(entityType);
+	            notificationRepository.save(n);
+	        }
+	        else if(!nearbyVet.getId().equals(entityId))
+	        {
+	            RegistrationDTO dto = new RegistrationDTO();
+	            registrationDTOs.add(dto.toDTO(nearbyVet));
+	            Notification n=notificationService.sendNotificationToVeterinarian(nearbyVet, message,rescueRequest);
+	            n.setRescuepostby(entityType);
+	            notificationRepository.save(n);
+	            
+	        }
+	    }
+
 		response.put("success", true);
 		response.put("message", "Rescue request posted successfully");
 		response.put("nearbyngoandvet", registrationDTOs);
