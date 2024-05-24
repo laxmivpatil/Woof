@@ -74,21 +74,24 @@ public class NotificationController {
     }
     
  // Retrieve User Notifications(only unread)
-    @GetMapping("/user/{user_id}/notifications")
-    public ResponseEntity<Map<String, Object>> getUserNotificationsunread(@PathVariable("user_id") Long userId) {
+    @GetMapping("/notifications/unread/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, Object>> getUserNotificationsunread(@PathVariable("entityId") Long entityId,@PathVariable("entityType") String entityType) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
         List<NotificationDTO> notificationList = new ArrayList<>();
-
+        List<Notification> notifications=new ArrayList<>();
         try {
-            List<Notification> notifications = notificationService.getUserNotifications(userId);
+            if(entityType.equalsIgnoreCase("user")) {
+                notifications = notificationService.getUserUnreadNotifications(entityId);
+          	}
+          	else if(entityType.equalsIgnoreCase("ngo")) {
+                   notifications = notificationService.getNgoUnreadNotifications(entityId);
+              	}
+          	else if(entityType.equalsIgnoreCase("veterinarian")) {
+                        notifications = notificationService.getVeterinarianUnreadNotifications(entityId);
+                  	}
             
-            // Filter out read notifications from the list
-            List<Notification> unreadNotifications = notifications.stream()
-                    .filter(notification -> !notification.isRead())
-                    .collect(Collectors.toList());
-            
-            for (Notification n : unreadNotifications) {
+            for (Notification n : notifications) {
                 System.out.println(n.getMessage());
                 notificationList.add( toDTO(n));
                  
@@ -104,24 +107,101 @@ public class NotificationController {
     }
 
 
-    // Mark Notification as Read
-    @PatchMapping("/user/{user_id}/notifications/{notification_id}/read")
+    
+    
+    
+    
+    
+   
+    //mark all notifications as read
+    @PatchMapping("/notification/readall/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, Object>> markAllNotificationsAsRead(
+    		@PathVariable("entityId") Long entityId,@PathVariable("entityType") String entityType) {
+    	Map<String, Object> response = new HashMap<>();
+        try { 
+         	 if(entityType.equalsIgnoreCase("user")) {
+        		 notificationRepository.markAllNotificationsAsReadForUser(entityId);
+           	}
+           	else if(entityType.equals("ngo")) { 
+           	 notificationRepository.markAllNotificationsAsReadForNgo(entityId);
+               	}
+           	else if(entityType.equalsIgnoreCase("veterinarian")) {
+           	 notificationRepository.markAllNotificationsAsReadForVeterinarian(entityId);
+                   	}
+        
+        response.put("status", true);
+        response.put("message", "All notifications marked as read successfully");
+        return new ResponseEntity<>(response,HttpStatus.OK);
+        
+         }
+         catch(Exception e){
+        	 System.out.println(e.getMessage());
+        	 response.put("status", false);
+             response.put("message", "notifications Not read Successfully");
+             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+         }
+    }
+    
+    
+    
+    //mark all notifications as unread
+    @PatchMapping("/notification/unreadall/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, Object>> markAllNotificationsAsUnRead(
+    		@PathVariable("entityId") Long entityId,@PathVariable("entityType") String entityType) {
+     	Map<String, Object> response = new HashMap<>();
+        try {
+         	 if(entityType.equalsIgnoreCase("user")) {
+        		 notificationRepository.markAllNotificationsAsUnReadForUser(entityId);
+           	}
+           	else if(entityType.equalsIgnoreCase("ngo")) {
+           	 notificationRepository.markAllNotificationsAsUnReadForNgo(entityId);
+               	}
+           	else if(entityType.equalsIgnoreCase("veterinarian")) {
+           	 notificationRepository.markAllNotificationsAsUnReadForVeterinarian(entityId);
+                   	}
+        
+        response.put("status", true);
+        response.put("message", "All notifications marked as unread successfully");
+        return new ResponseEntity<>(response,HttpStatus.OK);
+        
+         }
+         catch(Exception e){
+        	 response.put("status", false);
+             response.put("message", "notifications Not read Successfully");
+             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+         }
+    }
+    
+    
+    
+    // Mark single/multiple Notification as Read
+    @PatchMapping("/notification/read/{entityType}/{entityId}")
     public ResponseEntity<Map<String, Object>> markNotificationAsRead(
-            @PathVariable("user_id") Long userId,
-            @PathVariable("notification_id") Long notificationId) {
+    		@PathVariable("entityId") Long entityId,@PathVariable("entityType") String entityType,
+    		@RequestBody Map<String, List<Long>> requestBody) {
         Map<String, Object> response = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
-
+        List<Long> notificationIds = requestBody.get("notificationIds");
         try {
-            boolean success = notificationService.markNotificationAsRead(userId, notificationId);
-
+        	boolean success=false;
+        	 if(entityType.equalsIgnoreCase("user")) {
+                 success = notificationService.markUserNotificationsAsRead(entityId, notificationIds);
+           	}
+           	else if(entityType.equalsIgnoreCase("ngo")) {
+           		success = notificationService.markNgoNotificationsAsRead(entityId, notificationIds);
+               	}
+           	else if(entityType.equalsIgnoreCase("veterinarian")) {
+           		success = notificationService.markVeterinarianNotificationsAsRead(entityId, notificationIds);
+                   	}
+        	
             if (success) {
                 // Set success response properties
                 response.put("success", true);
+                response.put("message", "successfully mark notifications as read.");
             } else {
                 // Set failure response properties
                 response.put("success", false);
-                response.put("message", "Failed to mark notification as read.");
+                response.put("message", "Failed to mark notifications as read.");
             }
 
         } catch (Exception e) {
@@ -131,6 +211,127 @@ public class NotificationController {
 
         return new ResponseEntity<>(response, status);
     }
+    
+    
+ // Mark single/multiple Notification as unRead
+    @PatchMapping("/notification/unread/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, Object>> markNotificationsAsUnRead(
+    		@PathVariable("entityId") Long entityId,@PathVariable("entityType") String entityType,
+    		@RequestBody Map<String, List<Long>> requestBody) {
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        List<Long> notificationIds = requestBody.get("notificationIds");
+        try {
+        	boolean success=false;
+        	 if(entityType.equalsIgnoreCase("user")) {
+                 success = notificationService.markUserNotificationsAsUnRead(entityId, notificationIds);
+           	}
+           	else if(entityType.equalsIgnoreCase("ngo")) {
+           		success = notificationService.markNgoNotificationsAsUnRead(entityId, notificationIds);
+               	}
+           	else if(entityType.equalsIgnoreCase("veterinarian")) {
+           		success = notificationService.markVeterinarianNotificationsAsUnRead(entityId, notificationIds);
+                   	}
+        	
+            if (success) {
+                // Set success response properties
+                response.put("success", true);
+                response.put("message", "successfully mark notifications as read.");
+            } else {
+                // Set failure response properties
+                response.put("success", false);
+                response.put("message", "Failed to mark notifications as read.");
+            }
+
+        } catch (Exception e) {
+            response.put("message", "An error occurred while processing the request.");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(response, status);
+    }
+    
+    
+    
+  
+    //delete multiple notification
+    @DeleteMapping("/notification/delete/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, Object>> deleteMultipleNotifications(
+    		@PathVariable("entityId") Long entityId,@PathVariable("entityType") String entityType,
+            @RequestBody Map<String, List<Long>> requestBody) {
+    	
+    	Map<String, Object> response = new HashMap<>();
+    	  List<Long> notificationIds = requestBody.get("notificationIds");
+          
+        try {
+        notificationService.deleteMultipleNotifications(notificationIds);
+        
+        response.put("status", true);
+        response.put("message", "notifications Deleted Successfully");
+        return new ResponseEntity<>(response,HttpStatus.OK);
+         }
+         catch(Exception e){
+        	 response.put("status", false);
+             response.put("message", "notifications Not Deleted Successfully");
+             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+         }
+    }
+    
+    
+    @DeleteMapping("/notification/deleteall/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, Object>> deleteNotifications(
+            @PathVariable("entityType") String entityType,
+            @PathVariable("entityId") Long entityId) {
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+
+        try {
+            if (entityType.equalsIgnoreCase("user")) {
+                notificationService.deleteUserNotifications(entityId);
+            } else if (entityType.equalsIgnoreCase("ngo")) {
+                notificationService.deleteNgoNotifications(entityId);
+            } else if (entityType.equalsIgnoreCase("veterinarian")) {
+                notificationService.deleteVeterinarianNotifications(entityId);
+            } else {
+                response.put("success", false);
+                response.put("message", "Invalid entity type.");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
+            response.put("success", true);
+            response.put("message", "Notifications deleted successfully.");
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+            response.put("success", false);
+            response.put("message", "An error occurred while deleting notifications.");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(response, status);
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     // Create Notification
     @PostMapping("/notifications/create")
@@ -225,83 +426,10 @@ public class NotificationController {
                  return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
              }
     }
-    //delete given notification of given user
-    @DeleteMapping("/user/{userId}/notifications/{notificationId}")
-    public ResponseEntity<Map<String, Object>> deleteSingleNotification(
-            @PathVariable Long userId,
-            @PathVariable Long notificationId) {
-    	 Map<String, Object> response = new HashMap<>();
-         try {
-        notificationService.deleteNotification(notificationId);
-        response.put("status", true);
-        response.put("message", "notification Deleted Successfully");
-        return new ResponseEntity<>(response,HttpStatus.OK);
-         }
-         catch(Exception e){
-        	 response.put("status", false);
-             response.put("message", "notification Not Deleted Successfully");
-             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
-         }
-    }
-
-    //delete notification of given userid
-    @PostMapping("/user/{userId}/notifications/delete")
-    public ResponseEntity<Map<String, Object>> deleteMultipleNotifications(
-            @PathVariable Long userId,
-            @RequestBody List<Long> notificationIds) {
-    	
-    	Map<String, Object> response = new HashMap<>();
-        try {
-        notificationService.deleteMultipleNotifications(notificationIds);
-        
-        response.put("status", true);
-        response.put("message", "notifications Deleted Successfully");
-        return new ResponseEntity<>(response,HttpStatus.OK);
-         }
-         catch(Exception e){
-        	 response.put("status", false);
-             response.put("message", "notifications Not Deleted Successfully");
-             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
-         }
-    }
     
+   
     
-    //mark read all notification to provided userid
-    @PatchMapping("/user/{userId}/notifications/read-all")
-    public ResponseEntity<Map<String, Object>> markAllNotificationsAsRead(
-            @PathVariable Long userId) {
-    	Map<String, Object> response = new HashMap<>();
-        try {
-        Optional<User> optionalUser = userRepository.findById(userId);
-
-        if (optionalUser.isPresent()) {
-             List<Notification> userNotifications = notificationRepository.findByUserId(userId);
-
-            for (Notification notification : userNotifications) {
-                notification.setRead(true);
-            }
-
-            notificationRepository.saveAll(userNotifications);
-            
-        
-        response.put("status", true);
-        response.put("message", "All notifications marked as read successfully");
-        return new ResponseEntity<>(response,HttpStatus.OK);
-        } else {
-        	 response.put("status", false);
-             response.put("message", "User not Found");
-             return new ResponseEntity<>(response,HttpStatus.UNAUTHORIZED);
-        }
-         }
-         catch(Exception e){
-        	 response.put("status", false);
-             response.put("message", "notifications Not read Successfully");
-             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
-         }
-    }
-    
-    
-    
+      
     public NotificationDTO toDTO(Notification n)
     {
     	NotificationDTO nDTO=new NotificationDTO(n);
