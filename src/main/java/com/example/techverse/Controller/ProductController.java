@@ -130,4 +130,13 @@ public class ProductController {
 
         return response;
     }
+    @GetMapping("/byProductCategory")
+    public Map<String, List<Product>> getProductsByProductCategory(@RequestParam String productCategory) {
+    	List<Product> products=  productService.getProductsByProductCategory(productCategory);
+        
+        Map<String, List<Product>> response = new HashMap<>();
+        response.put("products", products);
+
+        return response;
+    }
 }

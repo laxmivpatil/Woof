@@ -41,6 +41,9 @@ public class ProductService {
     public List<Product> getProductsByPetCategory(String petCategory) {
         return productRepository.findByPetCategoryIgnoreCase(petCategory);
     }
+    public List<Product> getProductsByProductCategory(String productCategory) {
+        return productRepository.findByProductCategoryIgnoreCase(productCategory);
+    }
     
     
     
