@@ -30,8 +30,8 @@ public class EmailService {
 	    private PasswordEncoder passwordEncoder;
 	 private String senderEmail="laxmipatil070295@gmail.com";
 	
- 
-	 private String senderPassword= "mfaxitwotgaxhkst";
+
+     private String senderPassword= "puokarvnqseapgtl";
 	
 	 
      private String host= "smtp.gmail.com";
