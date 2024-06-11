@@ -17,6 +17,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+ 
 
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -79,7 +80,18 @@ import javax.persistence.OneToMany;
             inverseJoinColumns = @JoinColumn(name = "pet_id")
     )
     private Set<Pet> savedPets = new HashSet<>();
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShippingAddress> shippingAddresses = new ArrayList<>();
 
+    public List<ShippingAddress> getShippingAddresses() {
+        return shippingAddresses;
+    }
+
+    public void setShippingAddresses(List<ShippingAddress> shippingAddresses) {
+        this.shippingAddresses = shippingAddresses;
+    }
 
 	public Set<SavedRescueRequest> getSavedRescueRequests() {
 		return savedRescueRequests;

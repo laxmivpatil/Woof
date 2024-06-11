@@ -101,12 +101,25 @@ public class NGO {
     
     @JsonIgnore
     @OneToMany(mappedBy = "ngo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShippingAddress> shippingAddresses = new ArrayList<>();
+    
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "ngo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
     
     
     
     
     
+	public List<ShippingAddress> getShippingAddresses() {
+		return shippingAddresses;
+	}
+
+	public void setShippingAddresses(List<ShippingAddress> shippingAddresses) {
+		this.shippingAddresses = shippingAddresses;
+	}
+
 	public List<Notification> getNotifications() {
 		return notifications;
 	}
