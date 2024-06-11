@@ -490,6 +490,7 @@ public class RegistrationController {
 			veterinarian.get().setEmail(email);
 			veterinarian.get().setAge(Long.parseLong(age));
 			veterinarian.get().setGender(gender);
+			veterinarian.get().setAddress(address);
 			veterinarian.get().setExperience(Long.parseLong(experience));
 
 			veterinarian.get().setVeterinarianCertificate(veterinarianCertificate);
