@@ -64,15 +64,18 @@ public class AddressController {
 		User user = userRepository.findById(entityId)
 				.orElseThrow(() -> new UnauthorizedAccessException("User not found"));
 		  shippingAddress.setUser(user);
-	        shippingAddressRepository.save(shippingAddress);
+		  ShippingAddress shippingAddress1=shippingAddressRepository.save(shippingAddress);
 	        // Add the shipping address to the user's list of shipping addresses
-	        user.getShippingAddresses().forEach(address -> address.setSetDefaultAddress(false));
-
-	        user.getShippingAddresses().add(shippingAddress);
+	        user.getShippingAddresses().forEach(address ->address.setSetDefaultAddress(false));	
+	        
+	        //userRepository.save(user);
+	        shippingAddress.setSetDefaultAddress(true);
+	        System.out.println(shippingAddress);
+	        user.getShippingAddresses().add(shippingAddress1);
 	        userRepository.save(user);
 	        
 	       
-	        response.put("ShippingAddress", shippingAddress);
+	        response.put("ShippingAddress", shippingAddress1);
 
 	        response.put("status", true);
 	        response.put("message", "shipping Address added successfully");
@@ -82,14 +85,14 @@ public class AddressController {
 		NGO ngo = NgoRepository.findById(entityId)
 				.orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
 		shippingAddress.setNgo(ngo);
-        shippingAddressRepository.save(shippingAddress);
+		 shippingAddress1=shippingAddressRepository.save(shippingAddress);
         // Add the shipping address to the user's list of shipping addresses
         ngo.getShippingAddresses().forEach(address -> address.setSetDefaultAddress(false));
 
-      ngo.getShippingAddresses().add(shippingAddress);
+      ngo.getShippingAddresses().add(shippingAddress1);
         NgoRepository.save(ngo);
          
-        response.put("ShippingAddress", shippingAddress);
+        response.put("ShippingAddress", shippingAddress1);
 
         response.put("status", true);
         response.put("message", "shipping Address added successfully");
@@ -100,14 +103,14 @@ public class AddressController {
 		Veterinarian veterinarian = veterinarianRepository.findById(entityId)
 				.orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
 		shippingAddress.setVeterinarian(veterinarian);
-				shippingAddressRepository.save(shippingAddress);
+		 shippingAddress1	=shippingAddressRepository.save(shippingAddress);
         // Add the shipping address to the user's list of shipping addresses
 				veterinarian.getShippingAddresses().forEach(address -> address.setSetDefaultAddress(false));
 
-				veterinarian.getShippingAddresses().add(shippingAddress);
+				veterinarian.getShippingAddresses().add(shippingAddress1);
 				veterinarianRepository.save(veterinarian);
          
-        response.put("ShippingAddress", shippingAddress);
+        response.put("ShippingAddress", shippingAddress1);
 
         response.put("status", true);
         response.put("message", "shipping Address added successfully");
