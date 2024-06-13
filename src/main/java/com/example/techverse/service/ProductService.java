@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.techverse.Model.Product;
 import com.example.techverse.Repository.ProductRepository;
+import com.example.techverse.exception.ProductException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,16 @@ public class ProductService {
     public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
+    
+    public Product findProductById(Long id) throws  ProductException {
+  		// TODO Auto-generated method stub
+  		Optional<Product> product=productRepository.findById(id);
+  		if(product.isPresent())
+  		{
+  			return product.get();
+  		}
+  		throw new ProductException("Product Not Found with id "+id);
+  	}
 
     public List<Product> searchProducts(String keyword) {
         return productRepository.findByProductNameContainingIgnoreCase(keyword);

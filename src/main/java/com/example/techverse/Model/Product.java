@@ -1,11 +1,9 @@
 package com.example.techverse.Model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import javax.persistence.*;
+
+ 
+
 import java.util.List;
 
 @Entity
@@ -18,7 +16,7 @@ public class Product {
     
     private String productName;
     
-    private double price;
+    private Long price;
     
     @Column(length = 1000) // Adjust the length as needed
     private String description;
@@ -37,8 +35,11 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
     
-    private int ratings;
+ 	private double averageRating;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Rating> ratings;
+    
 	public Long getId() {
 		return id;
 	}
@@ -57,6 +58,14 @@ public class Product {
 
 	 
 
+	public double getAverageRating() {
+		return averageRating;
+	}
+
+	public void setAverageRating(double averageRating) {
+		this.averageRating = averageRating;
+	}
+
 	public String getProductName() {
 		return productName;
 	}
@@ -69,10 +78,7 @@ public class Product {
 		return price;
 	}
 
-	public void setPrice(double price) {
-		this.price = price;
-	}
-
+	 
 	public String getDescription() {
 		return description;
 	}
@@ -90,6 +96,10 @@ public class Product {
 	}
 
 	 
+
+	public void setPrice(Long price) {
+		this.price = price;
+	}
 
 	public String getPetCategory() {
 		return petCategory;
@@ -131,16 +141,15 @@ public class Product {
 		this.reviews = reviews;
 	}
 
-	public int getRatings() {
+	public List<Rating> getRatings() {
 		return ratings;
 	}
 
-	public void setRatings(int ratings) {
+	public void setRatings(List<Rating> ratings) {
 		this.ratings = ratings;
 	}
-    
-    
-    
+
+ 
     
     
     

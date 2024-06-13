@@ -84,7 +84,7 @@ public class ProductController {
         }
        
         product.setProductName(name);
-        product.setPrice(Double.parseDouble(price));
+        product.setPrice(Long.parseLong(price));
         product.setDescription(description);
         product.setVeg( Boolean.parseBoolean(isVeg));
         product.setPetCategory(petCategory);

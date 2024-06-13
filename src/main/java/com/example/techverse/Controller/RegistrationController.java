@@ -41,6 +41,7 @@ import com.example.techverse.Repository.VeterinarianRepository;
 import com.example.techverse.exception.FieldValidationException;
 import com.example.techverse.exception.UnauthorizedAccessException;
 import com.example.techverse.exception.UserAlreadyExistsException;
+import com.example.techverse.service.CartService;
 import com.example.techverse.service.EmailService;
 import com.example.techverse.service.NGOService;
 import com.example.techverse.service.StorageService;
@@ -58,6 +59,9 @@ public class RegistrationController {
 	 
 	@Autowired
 	private UserService userService;
+	 
+		@Autowired
+		private CartService cartService;
 	@Autowired
 	private UserRepository userRepository;
 	 
@@ -246,6 +250,7 @@ public class RegistrationController {
 			 if(role.equals("User")) {
 				  System.out.println(email);
 				  User user = userService.registerUser(email,phone,password,fullname,role);
+				  cartService.createCart(user);
 				entity_id=user.getId();
 				user=userService.generateAndSaveToken1(user);
 				token=user.getToken();

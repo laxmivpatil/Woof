@@ -25,7 +25,11 @@
     <artifactId>spring-web</artifactId>
     <version>5.3.28</version> <!-- Use the version compatible with your Spring Boot version -->
 </dependency>
-
+ <dependency>
+    <groupId>com.razorpay</groupId>
+    <artifactId>razorpay-java</artifactId>
+    <version>1.4.5</version>
+</dependency>
 <dependency>
     <groupId>commons-fileupload</groupId>
     <artifactId>commons-fileupload</artifactId>
