@@ -69,9 +69,9 @@ public class CartItemService {
 	}
 
 	 
-	public CartItem isCartItemExist(Cart cart, Product product, String size, Long userId) {
+	public CartItem isCartItemExist(Cart cart, Product product,  Long userId) {
 		 
-		CartItem cartItem=cartItemRepository.isCartItemExist(cart, product, size, userId);
+		CartItem cartItem=cartItemRepository.isCartItemExist(cart, product, userId);
 		
 		
 		

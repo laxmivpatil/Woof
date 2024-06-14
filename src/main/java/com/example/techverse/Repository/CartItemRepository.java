@@ -12,8 +12,8 @@ import com.example.techverse.Model.Product;
 
 public interface CartItemRepository extends JpaRepository<CartItem,Long> {
 	
-	@Query("SELECT ci from CartItem ci Where ci.cart=:cart And ci.product=:product And ci.size=:size And ci.userId=:userId")
-	public CartItem isCartItemExist(@Param("cart")Cart cart,@Param("product")Product product,@Param("size")String size,
+	@Query("SELECT ci from CartItem ci Where ci.cart=:cart And ci.product=:product And ci.userId=:userId")
+	public CartItem isCartItemExist(@Param("cart")Cart cart,@Param("product")Product product,
 			@Param("userId")Long userId);
 
 }

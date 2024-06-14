@@ -44,7 +44,7 @@ public class CartService {
 		
 		Product product=productService.findProductById(req.getProductId());
 		
-		CartItem isPresent=cartItemService.isCartItemExist(cart, product, req.getSize(), userId);
+		CartItem isPresent=cartItemService.isCartItemExist(cart, product, userId);
 		
 		if(isPresent==null) {
 			CartItem cartItem=new CartItem();
