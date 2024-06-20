@@ -148,7 +148,7 @@ public class LoginController {
     
     
     /****final****/
-    @PostMapping("user/loginbyotp")
+    @PostMapping("/user/loginbyotp")
 	public ResponseEntity<Map<String, Object>> loginuserbyotp(@RequestParam(required = false) String emailorphone, @RequestParam String otp){
     	Map<String, Object> response = new HashMap<String, Object>();
     	 
@@ -185,7 +185,7 @@ public class LoginController {
 	         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 	    }
 	}
-    @PostMapping("ngo/loginbyotp")
+    @PostMapping("/ngo/loginbyotp")
    	public ResponseEntity<Map<String, Object>> loginngobyotp(@RequestParam(required = false) String emailorphone, @RequestParam String otp){
        	Map<String, Object> response = new HashMap<String, Object>();
        	 
@@ -224,7 +224,7 @@ public class LoginController {
    	}
     
     /****final****/
-    @PostMapping("veterinarian/loginbyotp")
+    @PostMapping("/veterinarian/loginbyotp")
 	public ResponseEntity<Map<String, Object>> loginveterinarianbyotp(@RequestParam(required = false) String emailorphone, @RequestParam String otp){
     	Map<String, Object> response = new HashMap<String, Object>();
     	 
