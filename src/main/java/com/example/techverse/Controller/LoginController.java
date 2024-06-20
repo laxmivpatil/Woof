@@ -246,6 +246,8 @@ public class LoginController {
 	    	veterinarian=veterinarianService.generateAndSaveToken(veterinarian);
 	        response.put("success",true);
 	        response.put("message","verification successful");
+	        response.put("token",veterinarian.get().getToken());
+	   	      
 	        response.put("Users", dto.toDTO(veterinarian.get()));
 	        
 	      //  response.setData(token);
