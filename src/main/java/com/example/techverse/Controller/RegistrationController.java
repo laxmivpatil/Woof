@@ -447,11 +447,11 @@ public class RegistrationController {
 				String p=storageService.uploadFile(ngoCertificate);
 				ngo.get().setNGOCertificate(p);
 			}
-			ngoRepository.save(ngo.get());
+			NGO ngo1=ngoRepository.save(ngo.get());
 			responseBody.put("success", true);
 			responseBody.put("message", "User Updated Successfull");
-			responseBody.put("user_id", ngo.get().getId());
-			responseBody.put("token",ngo.get().getToken());
+			responseBody.put("user_id", ngo1.getId());
+			responseBody.put("token",ngo1.getToken());
 			responseBody.put("verification_status", "verified");
 			return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);
 
@@ -691,3 +691,4 @@ public class RegistrationController {
 	
 
 }
+
