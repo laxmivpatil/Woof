@@ -363,7 +363,7 @@ public class RegistrationController {
 			@RequestPart("email") String email,
 			@RequestPart("age") String age,
 			@RequestPart("gender") String gender,
-			@RequestPart("profile") MultipartFile profile){
+			@RequestPart(required=false,value="profile") MultipartFile profile){
 			
 			Map<String, Object> responseBody = new HashMap<String, Object>();
 
@@ -416,8 +416,8 @@ public class RegistrationController {
 			@RequestPart("phoneNumber") String phoneNumber,
 			@RequestPart("email") String email,
 			@RequestPart("ngodate") String ngodate,
-			@RequestPart("ngoCertificate") MultipartFile ngoCertificate,
-			@RequestPart("ngoProfile") MultipartFile ngoProfile
+			@RequestPart(required=false,value="ngoCertificate") MultipartFile ngoCertificate,
+			@RequestPart(required=false,value="ngoProfile") MultipartFile ngoProfile
 			){
 			
 			Map<String, Object> responseBody = new HashMap<String, Object>();
@@ -474,9 +474,9 @@ public class RegistrationController {
 			@RequestPart("age") String age,
 			@RequestPart("experience") String experience,
 			@RequestPart("gender") String gender,
-			@RequestPart("veterinarianCertificate") String veterinarianCertificate,
-			@RequestPart("veterinarianCertification") MultipartFile veterinarianCertification,
-			@RequestPart("veterinarianProfile") MultipartFile veterinarianProfile
+			@RequestPart(required=false,value="veterinarianCertificate") String veterinarianCertificate,
+			@RequestPart(required=false,value="veterinarianCertification") MultipartFile veterinarianCertification,
+			@RequestPart(required=false,value="veterinarianProfile") MultipartFile veterinarianProfile
 			){
 				Map<String, Object> responseBody = new HashMap<String, Object>();
 
