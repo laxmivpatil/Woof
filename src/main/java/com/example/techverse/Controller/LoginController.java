@@ -172,6 +172,7 @@ public class LoginController {
 	        response.put("success",true);
 	        response.put("message","verification successful");
 	        response.put("token",user.get().getToken());
+	        response.put("profile",user.get().getProfile());
 	        response.put("Users", dto.toDTO(user.get()));
 	      //  response.setData(token);
 	        return ResponseEntity.ok(response);
@@ -209,6 +210,8 @@ public class LoginController {
    	        response.put("success",true);
    	        response.put("message","verification successful");
    	        response.put("token",ngo.get().getToken());
+
+	        response.put("profile",ngo.get().getNGOProfile());
    	        response.put("Users", dto.toDTO(ngo.get()));
    	      //  response.setData(token);
    	        return ResponseEntity.ok(response);
@@ -247,6 +250,8 @@ public class LoginController {
 	        response.put("success",true);
 	        response.put("message","verification successful");
 	        response.put("token",veterinarian.get().getToken());
+
+	        response.put("profile",veterinarian.get().getVeterinarianProfile());
 	   	      
 	        response.put("Users", dto.toDTO(veterinarian.get()));
 	        

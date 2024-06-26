@@ -129,6 +129,7 @@ public class UserService{
 				responseBody.put("success", true);
 				responseBody.put("message", "User Login Successfully");
 				responseBody.put("Token",userOptional.get().getToken());
+				  responseBody.put("profile",userOptional.get().getProfile());
 				responseBody.put("user", dto.toDTO(userOptional.get()));
 			 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);	
 				 

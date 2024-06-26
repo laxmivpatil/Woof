@@ -94,6 +94,8 @@ public class VeterinarianService {
 				responseBody.put("message", "Veterinarian Login Successfully");
 				responseBody.put("Token",veterinarianOptional.get().getToken());
 				responseBody.put("veterinarian",dto.toDTO(veterinarianOptional.get()));
+
+		        responseBody.put("profile",veterinarianOptional.get().getVeterinarianProfile());
 			 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);	
 				 
 			}

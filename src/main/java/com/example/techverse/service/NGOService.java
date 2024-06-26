@@ -106,6 +106,7 @@ public class NGOService{
 				responseBody.put("success", true);
 				responseBody.put("message", "NGO Login Successfully");
 				responseBody.put("Token",ngoOptional.get().getToken());
+				responseBody.put("profile",ngoOptional.get().getNGOProfile());
 				responseBody.put("ngo",dto.toDTO(ngoOptional.get()) );
 			 	return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.OK);	
 				 
