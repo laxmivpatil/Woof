@@ -1,6 +1,7 @@
 package com.example.techverse.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import com.example.techverse.Repository.AnimalRescueRequestRepository;
 import com.example.techverse.Repository.NGORepository;
 import com.example.techverse.Repository.NotificationRepository;
 import com.example.techverse.Repository.PhotoRepository;
+import com.example.techverse.Repository.SavedRescueRequestRepository;
 import com.example.techverse.Repository.UserRepository;
 import com.example.techverse.Repository.VeterinarianRepository;
 import com.example.techverse.exception.UnauthorizedAccessException;
@@ -60,6 +62,8 @@ public class RescueRequestController {
 	@Autowired
     private AnimalRescueRequestService  animalRescueRequestService;
 	
+	@Autowired
+    private	SavedRescueRequestRepository savedRescueRequestRepository;
 	
 	@Autowired
 	private NotificationService notificationService;
@@ -369,4 +373,46 @@ public class RescueRequestController {
 	}
 
 	 
+	
+	@Transactional
+	@DeleteMapping("/delete_rescue_requests/{entityType}/{entityId}")
+	public ResponseEntity<Map<String,Object>> deleteRescueRequests(
+			@RequestHeader("Authorization") String accessToken,@PathVariable String entityType, @PathVariable Long entityId,
+			 @RequestParam("postId") String postId) throws IOException, UnauthorizedAccessException {
+		// Find the user based on the access token
+		 Map<String, Object> response = new HashMap<String, Object>();
+		 switch (entityType.toLowerCase()) {
+        case "user":
+            User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+            break;
+        case "ngo":
+            NGO ngo = NgoRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+            break;
+        case "veterinarian":
+            Veterinarian veterinarian = veterinarianRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+            break;
+         
+    }
+		 
+		 
+		 // Attempt to delete the rescue request
+		    try {
+		    	 savedRescueRequestRepository.deleteByRescueRequestId(Long.parseLong(postId));
+		        rescueRequestRepository.deleteById(Long.parseLong(postId));
+		    } catch (EmptyResultDataAccessException e) {
+		        response.put("success", false);
+		        response.put("message", "Post not found");
+		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		    }
+
+		    response.put("success", true);
+		    response.put("message", "Post deleted successfully");
+		    return ResponseEntity.ok(response);
+		 
+	}
+	
+	
+	
+	
+	
 }

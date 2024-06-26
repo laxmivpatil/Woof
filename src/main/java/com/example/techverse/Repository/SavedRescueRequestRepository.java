@@ -13,5 +13,6 @@ public interface SavedRescueRequestRepository extends JpaRepository<SavedRescueR
 	 SavedRescueRequest findByNgoAndRescueRequestId(NGO ngo, Long rescueRequestId);
 	 SavedRescueRequest findByVeterinarianAndRescueRequestId(Veterinarian veterinarian, Long rescueRequestId);
 	 
+	 void deleteByRescueRequestId(Long rescueRequestId);
 
 }
