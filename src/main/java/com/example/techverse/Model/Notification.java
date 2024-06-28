@@ -30,7 +30,7 @@ public class Notification {
     private LocalDateTime timestamp;
     
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "rescue_request_id", nullable = true)
     private AnimalRescueRequest rescueRequest;
     

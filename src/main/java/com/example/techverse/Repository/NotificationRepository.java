@@ -30,6 +30,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findByVeterinarianIdAndIsReadFalseOrderByTimestampDesc(Long veterinarianId);
     
     
+    List<Notification> findByRescueRequestId(Long rescueId);
+    
     
     @Modifying
     @Transactional

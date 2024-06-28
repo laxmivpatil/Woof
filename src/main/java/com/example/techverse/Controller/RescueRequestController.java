@@ -374,7 +374,7 @@ public class RescueRequestController {
 
 	 
 	
-	@Transactional
+ 
 	@DeleteMapping("/delete_rescue_requests/{entityType}/{entityId}")
 	public ResponseEntity<Map<String,Object>> deleteRescueRequests(
 			@RequestHeader("Authorization") String accessToken,@PathVariable String entityType, @PathVariable Long entityId,
@@ -397,8 +397,13 @@ public class RescueRequestController {
 		 
 		 // Attempt to delete the rescue request
 		    try {
+		    	  List<Notification> notifications = notificationRepository.findByRescueRequestId(Long.parseLong(postId));
+		    	  for(Notification notification:notifications) {
+		    		  notification.setRescueRequest(null);
+		    	  }
+		    	    notificationRepository.deleteAll(notifications);
 		    	 savedRescueRequestRepository.deleteByRescueRequestId(Long.parseLong(postId));
-		        rescueRequestRepository.deleteById(Long.parseLong(postId));
+		      rescueRequestRepository.deleteById(Long.parseLong(postId));
 		    } catch (EmptyResultDataAccessException e) {
 		        response.put("success", false);
 		        response.put("message", "Post not found");
