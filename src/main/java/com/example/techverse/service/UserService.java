@@ -25,15 +25,19 @@ import com.example.techverse.EmailSender;
 import com.example.techverse.JwtUtil;
 import com.example.techverse.SmsSender;
 import com.example.techverse.DTO.RegistrationDTO;
+import com.example.techverse.Model.Product;
 import com.example.techverse.Model.User;
+import com.example.techverse.Repository.ProductRepository;
 import com.example.techverse.Repository.UserRepository;
+import com.example.techverse.exception.ProductException;
 import com.example.techverse.exception.UserAlreadyExistsException;
+import com.example.techverse.exception.UserException;
  
 
 @Service
 public class UserService{
-	
-	
+	@Autowired
+	private ProductRepository productRepository;
  
 	
 	@Autowired
@@ -141,6 +145,62 @@ public class UserService{
 
 	 		
 		}
+	 
+ 
+	    public User addFavoriteProduct(Long userId, Long productId)  throws ProductException{
+	        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+	        Optional<Product> product = productRepository.findById(productId);// Implement this method to get the product from repository
+	        		
+	        if(product.isEmpty())	{
+	        	System.out.println("hi i am not ");
+	        	throw new ProductException("No product found");
+	        }
+	        if (user.getFavoriteProducts().contains(product.get())) {
+	            // Product already exists in favorites, handle this case as per your requirements
+	            // For example, throw an exception, log a message, or return the user as-is
+	            return user;
+	        }
+	        
+	        user.getFavoriteProducts().add(product.get());
+	        return userRepository.save(user);
+	    }
+		
+		 
+	    public User deleteFavoriteProduct(Long userId, Long productId) throws UserException, ProductException {
+	        User user = userRepository.findById(userId).orElseThrow(() -> new UserException("User not found"));
+	        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductException("Product not found"));
+
+	        if (!user.getFavoriteProducts().contains(product)) {
+	            throw new ProductException("Product not found in user's favorites");
+	        }
+
+	        user.getFavoriteProducts().remove(product);
+	        userRepository.save(user);
+
+	        return user;
+	    }
+
+	    
+	    public List<Product> getFavoriteProducts(Long userId) throws UserException {
+	        User user = userRepository.findById(userId).orElseThrow(() -> new UserException("User not found"));
+	        return user.getFavoriteProducts();
+	    }
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 	 
 	 public List<User> getFollowersByUserId(Long userId) {
 	        // Implement the logic to retrieve followers by user ID using Spring Data JPA

@@ -18,31 +18,43 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.techverse.DTO.SavedPostResponseDTO;
+import com.example.techverse.Model.Product;
 import com.example.techverse.Model.SavedPost;
 import com.example.techverse.Model.Story;
 import com.example.techverse.Model.User;
 import com.example.techverse.Repository.SavedPostRepository;
 import com.example.techverse.Repository.StoryRepository;
 import com.example.techverse.Repository.UserRepository;
+import com.example.techverse.exception.ProductException;
+import com.example.techverse.exception.UserException;
+import com.example.techverse.service.ProductService;
+import com.example.techverse.service.UserService;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageOptions;
-
+ 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("")
 public class UserController {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	ProductService productService;
 	@Autowired
 	StoryRepository storyRepository;
 	@Autowired
@@ -51,7 +63,7 @@ public class UserController {
 	 @Autowired
 	    private Storage storage; // Inject the Google Cloud Storage client
 
-	 @DeleteMapping("/delete")
+	 @DeleteMapping("/users/delete")
 		public ResponseEntity<Map<String, Object>> deleteuser(@RequestParam(required = false) Long id)
 		{
 		 Map<String, Object> responseBody = new HashMap<>();
@@ -73,7 +85,7 @@ public class UserController {
 	 
 	 
 	 
-	@GetMapping("/profile")
+	@GetMapping("/users/profile")
 	public ResponseEntity<User> getUserProfile(@RequestParam(required = false) Long id)
 	{
 		Optional<User> user=userRepository.findById(id);
@@ -81,7 +93,7 @@ public class UserController {
 
 	}
 
-	@PostMapping("/save/{story_id}")
+	@PostMapping("/users/save/{story_id}")
 	public ResponseEntity<String> savePost(
 	        @PathVariable String story_id,
 	        @RequestBody String userId) {
@@ -159,7 +171,7 @@ public class UserController {
 	
 	//cloud
 	
-	@PostMapping("/upload-image")
+	@PostMapping("/users/upload-image")
     public ResponseEntity<String> uploadImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("userId") Long userId) {
@@ -193,5 +205,64 @@ public class UserController {
 
     private Storage getStorage() throws IOException {
         return StorageOptions.getDefaultInstance().getService();
+    }
+    
+    
+
+	@PostMapping("/api/user/favorite-products")
+    public Map<String, Object> addFavoriteProduct(@RequestHeader("Authorization") String jwt, @RequestBody Map<String, Long> request)throws UserException,ProductException {
+		Map<String,Object> response = new HashMap<>();
+	       
+		Long productId = request.get("productId");
+		Optional<User> user =userRepository.findByToken(jwt.substring(7));
+		if(user.isEmpty()) {
+			 response.put("status", false);
+		        response.put("message", "Invalid token");
+		        return response;
+		}
+			userService.addFavoriteProduct(user.get().getId(), productId);
+			 response.put("status", true);
+        response.put("message", "product added to wishlist successfully");
+        return response;
+	    }
+	
+	@DeleteMapping("/api/user/favorite-products")
+    public  Map<String, Object> deleteFavoriteProduct(@RequestHeader("Authorization") String jwt,  @RequestParam Long productId) throws UserException, ProductException {
+       // User user = userService.findUserProfileByJwt(jwt).get();
+		  Map<String,Object> response = new HashMap<>();
+	      
+		
+		Optional<User> user =userRepository.findByToken(jwt.substring(7));
+		if(user.isEmpty()) {
+			 response.put("status", false);
+		        response.put("message", "Invalid token");
+		        return response;
+		}
+		userService.deleteFavoriteProduct(user.get().getId(), productId);
+        response.put("status", true);
+        response.put("message", "product delete from wishlist successfully");
+        return response;
+    }
+
+    @GetMapping("/api/user/favorite-products")
+    public Map<String,Object> getFavoriteProducts(@RequestHeader("Authorization") String jwt) throws UserException {
+      //  User user = userService.findUserProfileByJwt(jwt).get();
+	   
+    	
+    	
+    	Map<String,Object> response = new HashMap<>();
+    	
+    	Optional<User> user =userRepository.findByToken(jwt.substring(7));
+		if(user.isEmpty()) {
+			 response.put("status", false);
+		        response.put("message", "Invalid token");
+		        return response;
+		}
+	        List<Product> product=userService.getFavoriteProducts(user.get().getId());
+    	response.put("product", productService.setfavouriteStatus(user.get(), product));
+		response.put("status", true);
+        response.put("message", "product retrived Successfully");
+	        return response; 
+    
     }
 }

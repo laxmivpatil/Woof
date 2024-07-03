@@ -40,6 +40,20 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings;
     
+    
+    @Transient
+    private boolean isFavorite;
+
+    // existing getters and setters
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+    
 	public Long getId() {
 		return id;
 	}

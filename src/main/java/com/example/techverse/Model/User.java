@@ -275,6 +275,25 @@ import javax.persistence.OneToMany;
         this.notificationsEnabled = notificationsEnabled;
     }
 	
+	@ManyToMany
+    @JoinTable(
+            name = "user_favorite_products",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private List<Product> favoriteProducts = new ArrayList<>();
+	
+	
+	
+	
+	
+	public List<Product> getFavoriteProducts() {
+		return favoriteProducts;
+	}
+
+	public void setFavoriteProducts(List<Product> favoriteProducts) {
+		this.favoriteProducts = favoriteProducts;
+	}
+
 	@JsonIgnore
 	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	    private List<Story> stories;

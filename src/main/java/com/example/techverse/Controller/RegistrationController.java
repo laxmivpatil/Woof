@@ -661,6 +661,8 @@ public class RegistrationController {
             User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
             response.put("success", true);
     		response.put("message", "user retrived successfully");
+    		response.put("profile", user.getProfile());
+        	
     		response.put("entity", user);
     		return ResponseEntity.ok(response);
         
@@ -668,6 +670,8 @@ public class RegistrationController {
             NGO ngo = ngoRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
             response.put("success", true);
     		response.put("message", "ngo retrived successfully");
+    		response.put("profile", ngo.getNGOProfile());
+        	
     		response.put("entity", ngo);
     		return ResponseEntity.ok(response);
              
@@ -675,6 +679,8 @@ public class RegistrationController {
             Veterinarian veterinarian = veterinarianRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
             response.put("success", true);
     		response.put("message", "veterinarian retrived successfully");
+    		response.put("profile", veterinarian.getVeterinarianProfile());
+        	
     		response.put("entity", veterinarian);
     		return ResponseEntity.ok(response);
              

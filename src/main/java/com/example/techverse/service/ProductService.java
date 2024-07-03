@@ -3,11 +3,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.techverse.Model.Product;
+import com.example.techverse.Model.User;
 import com.example.techverse.Repository.ProductRepository;
 import com.example.techverse.exception.ProductException;
+ 
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -56,6 +60,16 @@ public class ProductService {
         return productRepository.findByProductCategoryIgnoreCase(productCategory);
     }
     
+    public List<Product> setfavouriteStatus(User user,List<Product> products)
+    {
+    	 
+    	Set<Long> favoriteProductIds = user.getFavoriteProducts().stream()
+                .map(Product::getId)
+                .collect(Collectors.toSet());
+    	products.forEach(product -> product.setFavorite(favoriteProductIds.contains(product.getId())));
+    	return products;
+
+    }
     
     
 }
