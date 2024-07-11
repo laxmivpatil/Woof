@@ -199,6 +199,52 @@ public class StoryService {
 	        result.put("alluser", allUsers);
 	        return result;
 	    }
+	    public Map<String, List<Object>> getOwnStories(String entityType, Long entityId) {
+	        List<Story> stories = new ArrayList<>();
+
+	        if ("user".equalsIgnoreCase(entityType)) {
+	            User user = userRepository.findById(entityId).orElse(null);
+	            if (user != null) {
+	                stories = storyRepository.findByUser(user);
+	            }
+	        } else if ("ngo".equalsIgnoreCase(entityType)) {
+	            // Assuming you have an NGO repository and method to find stories by NGO
+	            // Replace `findByNgo` with your actual method in the repository
+	          //  stories = storyRepository.findByNgoId(entityId);
+	        } else if ("vet".equalsIgnoreCase(entityType)) {
+	            // Assuming you have a Veterinarian repository and method to find stories by Veterinarian
+	            // Replace `findByVeterinarian` with your actual method in the repository
+	          //  stories = storyRepository.findByVeterinarianId(entityId);
+	        }
+
+	        Map<String, List<Object>> groupedStories = new HashMap<>();
+
+	        for (Story story : stories) {
+	            String userId = "user^" + story.getUser().getId() + "^" + story.getUser().getFullName() + "^" + story.getUser().getProfile();
+	            List<Object> userStoriesAndProfile = groupedStories.computeIfAbsent(userId, k -> new ArrayList<>());
+	            userStoriesAndProfile.add(story);
+	        }
+
+	        List<Object> allUsers = new ArrayList<>();
+	        for (Map.Entry<String, List<Object>> entry : groupedStories.entrySet()) {
+	            String[] parts = entry.getKey().split("\\^");
+
+	            Map<String, Object> userMap = new HashMap<>();
+	            userMap.put("id", parts[1]);
+	            userMap.put("entitytype", parts[0]);
+	            userMap.put("fullname", parts[2]); // Implement this method to get the full name based on entity type and ID
+	            userMap.put("profile", parts[3]); // Implement this method to get the profile based on entity type and ID
+	            userMap.put("stories", entry.getValue());
+	            allUsers.add(userMap);
+	        }
+
+	        Map<String, List<Object>> result = new HashMap<>();
+	        result.put("alluser", allUsers);
+	        return result;
+	    }
+	    
+	    
+	    
 	    /*
 	    public Map<String, List<Object>> getAllStoriesGroupedByEntities() {
 	        List<Story> stories = storyRepository.findPublicStories();	      

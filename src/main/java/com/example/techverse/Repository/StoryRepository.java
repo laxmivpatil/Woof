@@ -22,7 +22,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 	@Query("SELECT s FROM Story s WHERE s.visibility = 'public'")
     List<Story> findPublicStories();
 	
-	 
+	 List<Story> findByUser(User user);
 	 
 	  
     // For example, to find a story by its ID

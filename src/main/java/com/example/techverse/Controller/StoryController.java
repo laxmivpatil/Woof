@@ -102,7 +102,14 @@ public class StoryController {
         List<Story> stories = storyService.getAllStories();
         return ResponseEntity.ok(stories);
     }
-    
+    @GetMapping("/own/{entityType}/{entityId}")
+    public ResponseEntity<Map<String, List<Object>>> getOwnStories( @RequestHeader("Authorization") String authorization,
+   		 
+   		 @PathVariable String entityType,
+            @PathVariable Long entityId) {
+    	Map<String, List<Object>> stories = storyService.getOwnStories(entityType, entityId);
+        return ResponseEntity.ok(stories);
+    }
     
     @GetMapping("/grouped")
     public ResponseEntity<Map<String, List<Object>>> getAllStoriesGroupedByEntities() {
