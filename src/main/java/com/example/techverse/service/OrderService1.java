@@ -14,10 +14,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderService1 {
 
-     
-    private String keyId="rzp_test_wIkA36LzCEN5sz";
- 
-    private String keySecret="q66erZ3vUMDufjJyZi3iA7Qy";
+	 private String keyId="rzp_test_wIkA36LzCEN5sz";
+	 
+	    private String keySecret="q66erZ3vUMDufjJyZi3iA7Qy";
 
     public String createOrder(double amount, String currency, String receipt) throws RazorpayException {
         RazorpayClient razorpayClient = new RazorpayClient(keyId, keySecret);

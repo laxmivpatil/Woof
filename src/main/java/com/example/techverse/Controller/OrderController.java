@@ -20,11 +20,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.techverse.DTO.ApiResponse;
+import com.example.techverse.Model.Order;
+import com.example.techverse.Model.ShippingAddress;
+import com.example.techverse.Model.User;
+import com.example.techverse.Repository.OrderItemRepository;
+import com.example.techverse.Repository.OrderRepository;
+import com.example.techverse.Repository.ShippingAddressRepository;
+import com.example.techverse.Repository.UserRepository;
+import com.example.techverse.exception.OrderException;
+import com.example.techverse.exception.UnauthorizedAccessException;
+import com.example.techverse.exception.UserException;
+import com.example.techverse.service.OrderService;
+import com.example.techverse.service.OrderService1;
+import com.example.techverse.service.UserService;
+import com.razorpay.RazorpayException;
+
  
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
-	/*
+	  
 	@Autowired
 	private OrderService orderService;
 	
@@ -60,7 +76,7 @@ public class OrderController {
         }
     }
 	
-	
+	/*
     @PostMapping("/addshippingaddress")
     public ResponseEntity<Map<String, Object>> addShippingAddress(@RequestBody ShippingAddress shippingAddress,@RequestHeader("Authorization") String jwt)throws UserException {
         // Retrieve the user by ID (you may adjust this based on your authentication mechanism)
@@ -266,17 +282,17 @@ System.out.println("fkdgjkhdfkjghkdfjhg");
         response.put("shippingAddress", shippingAddress);
 
         return ResponseEntity.ok(response);
-    }
-	@PostMapping("/")
-	public ResponseEntity<Order> createOrder(@RequestBody String shippingAddress,@RequestHeader("Authorization") String jwt)throws  RazorpayException,UserException{
-		
-		User user =userService.findUserProfileByJwt(jwt).get();
+    }*/
+	@PostMapping("/{entityType}/{entityId}/{shippingId}")
+	public ResponseEntity<Order> createOrder(@RequestHeader("Authorization") String jwt,@PathVariable String entityType, @PathVariable Long entityId, @PathVariable Long shippingId)throws  RazorpayException,UserException{
+		User user = userRepository.findById(entityId).orElseThrow(() -> new UserException("User not found"));
+		ShippingAddress shippingAddress=shippingAddressRepository.findById(shippingId).orElseThrow(() -> new UserException("Shipping Address not found"));
 		System.out.println(user.getId());
 		Order order=orderService.createOrder(user, shippingAddress);
  		return new ResponseEntity<Order>(order,HttpStatus.OK);
 	}
 	
-	
+	/*
 	
 	@PutMapping("/checkout")
     public ResponseEntity<Map<String, Object>> checkout(@RequestBody CheckoutRequest checkoutRequest)throws OrderException {
@@ -320,11 +336,12 @@ System.out.println("fkdgjkhdfkjghkdfjhg");
         	 return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
         }
     }
+    */
 	
-	@GetMapping("/")
-	public ResponseEntity<Map<String, Object>> userOrderHistory(@RequestHeader("Authorization") String jwt)throws UserException{
- 		User user =userService.findUserProfileByJwt(jwt).get();
-		List<Order> order=orderService.usersOrderHistory(user.getId());
+	@GetMapping("/{entityType}/{entityId}")
+	public ResponseEntity<Map<String, Object>> userOrderHistory(@RequestHeader("Authorization") String jwt,@PathVariable String entityType, @PathVariable Long entityId)throws UserException{
+		User user = userRepository.findById(entityId).orElseThrow(() -> new UserException("User not found"));
+		 List<Order> order=orderService.usersOrderHistory(user.getId());
 		 Map<String,Object> response = new HashMap<>();
          response.put("Order", order);
 
@@ -338,8 +355,8 @@ System.out.println("fkdgjkhdfkjghkdfjhg");
 	public ResponseEntity<Map<String, Object>> findOrderById(@PathVariable("Id") String orderId,
 			@RequestHeader("Authorization") String jwt)throws UserException,OrderException{
 		
-		User user =userService.findUserProfileByJwt(jwt).get();
-		
+		//User user = userRepository.findById(entityId).orElseThrow(() -> new UserException("User not found"));
+			
 		Order order=orderService.findOrderById(orderId);
 		
 		Map<String,Object> response = new HashMap<>();
@@ -351,8 +368,8 @@ System.out.println("fkdgjkhdfkjghkdfjhg");
 		
 		
 	}
-	@DeleteMapping("/{Id}")
-	public ResponseEntity<ApiResponse> deleteOrderById(@PathVariable("Id") String orderId,
+	/*@DeleteMapping("/{Id}")
+	public ResponseEntity<Map<String, Object>> deleteOrderById(@PathVariable("Id") String orderId,
 			@RequestHeader("Authorization") String jwt)throws UserException,OrderException{
 		
 		User user =userService.findUserProfileByJwt(jwt).get();
@@ -366,8 +383,8 @@ System.out.println("fkdgjkhdfkjghkdfjhg");
 		
 		
 	}
+	 
 	*/
-	
 	 
 
 }

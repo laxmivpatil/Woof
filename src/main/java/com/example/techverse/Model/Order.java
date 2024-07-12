@@ -7,11 +7,14 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -38,8 +41,9 @@ public class Order {
 	
 	private LocalDateTime deliveryDate;
 	
- 
-	private String shippingAddress;
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="shipping_id",nullable=false)
+	private ShippingAddress shippingAddress;
 	
 	@javax.persistence.Embedded
 	private PaymentDetails paymentDetails=new PaymentDetails();
@@ -74,8 +78,7 @@ public class Order {
 		this.user = user;
 		this.orderItems = orderItems;
 		this.orderDate = orderDate;
-		this.deliveryDate = deliveryDate;
-		this.shippingAddress = shippingAddress;
+		this.deliveryDate = deliveryDate; 
 		this.paymentDetails = paymentDetails;
 		this.toatalPrice = toatalPrice;
 		this.totalDiscountedPrice = totalDiscountedPrice;
@@ -187,15 +190,15 @@ public class Order {
 		this.createdAt = createdAt;
 	}
 
-	public String getShippingAddress() {
+	public ShippingAddress getShippingAddress() {
 		return shippingAddress;
 	}
 
-	public void setShippingAddress(String shippingAddress) {
+	public void setShippingAddress(ShippingAddress shippingAddress) {
 		this.shippingAddress = shippingAddress;
 	}
-	
-	
+
+	 
 	
 	
 	

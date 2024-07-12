@@ -13,6 +13,7 @@ import com.example.techverse.Model.Cart;
 import com.example.techverse.Model.CartItem;
 import com.example.techverse.Model.Order;
 import com.example.techverse.Model.OrderItem;
+import com.example.techverse.Model.ShippingAddress;
 import com.example.techverse.Model.User;
 import com.example.techverse.Repository.CartRepository;
 import com.example.techverse.Repository.OrderItemRepository;
@@ -55,7 +56,7 @@ public class OrderService {
 	
 	
 	
-	public Order createOrder(User user, String shippAddress) throws RazorpayException{
+	public Order createOrder(User user, ShippingAddress shippAddress)  {
  	Cart cart =cartService.findUserCart(user.getId());
 		List<OrderItem> orderItems=new ArrayList<>();
 		
@@ -76,7 +77,8 @@ public class OrderService {
 			orderItems.add(createdOrderItem);
 		}
 		
-		String order_id=orderService1.createOrder(cart.getTotalPrice(), "INR", RandomStringUtils.randomAlphanumeric(10));
+		//String order_id=orderService1.createOrder(cart.getTotalPrice(), "INR", RandomStringUtils.randomAlphanumeric(10));
+		String order_id=RandomStringUtils.randomAlphanumeric(10);
 		//money is in mind
 		Order createdOrder=new Order();
 		createdOrder.setOrderId(order_id);
