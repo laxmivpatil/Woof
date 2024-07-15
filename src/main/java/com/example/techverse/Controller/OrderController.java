@@ -284,12 +284,19 @@ System.out.println("fkdgjkhdfkjghkdfjhg");
         return ResponseEntity.ok(response);
     }*/
 	@PostMapping("/{entityType}/{entityId}/{shippingId}")
-	public ResponseEntity<Order> createOrder(@RequestHeader("Authorization") String jwt,@PathVariable String entityType, @PathVariable Long entityId, @PathVariable Long shippingId)throws  RazorpayException,UserException{
+	public ResponseEntity<Map<String, Object>>  createOrder(@RequestHeader("Authorization") String jwt,@PathVariable String entityType, @PathVariable Long entityId, @PathVariable Long shippingId)throws  RazorpayException,UserException{
 		User user = userRepository.findById(entityId).orElseThrow(() -> new UserException("User not found"));
 		ShippingAddress shippingAddress=shippingAddressRepository.findById(shippingId).orElseThrow(() -> new UserException("Shipping Address not found"));
 		System.out.println(user.getId());
 		Order order=orderService.createOrder(user, shippingAddress);
- 		return new ResponseEntity<Order>(order,HttpStatus.OK);
+		
+		
+		Map<String,Object> response = new HashMap<>();
+        response.put("Order", order);
+         response.put("status", true);
+        response.put("message", "order created successfully");
+        return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
+ 		 
 	}
 	
 	/*
