@@ -41,7 +41,7 @@ public class Order {
 	
 	private LocalDateTime deliveryDate;
 	
-	@OneToOne(fetch=FetchType.LAZY)
+	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="shipping_id",nullable=false)
 	private ShippingAddress shippingAddress;
 	
