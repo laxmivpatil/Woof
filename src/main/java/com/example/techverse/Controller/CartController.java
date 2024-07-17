@@ -47,6 +47,7 @@ public class CartController {
 	public ResponseEntity<ApiResponse1> addItemToCart(@RequestBody AddItemRequest req,
 			@RequestHeader("Authorization") String jwt,@PathVariable String entityType, @PathVariable Long entityId) throws UnauthorizedAccessException,ProductException{
 		 User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+		 System.out.println(req.getQuantity()+"hi am");
 	         cartService.addCartItem(user.getId(), req);
 		  ApiResponse1 res=new ApiResponse1();
 			 res.setMessage("Item added to cart successfully");

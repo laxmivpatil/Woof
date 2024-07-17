@@ -33,14 +33,14 @@ public class CartItemService {
 	private CartRepository cartRepository;
 	public CartItem createCartitem(CartItem cartItem) {
 		 
-		cartItem.setQuantity(1);
-		Product p=cartItem.getProduct();
+		//cartItem.setQuantity(1);
+	/*	Product p=cartItem.getProduct();
 		 
 		cartItem.setPrice((long) (cartItem.getProduct().getPrice()*cartItem.getQuantity()));
 		 
 		cartItem.setDiscountedPrice(0L*cartItem.getQuantity());
 		
-		
+		*/
 		CartItem createdCartItem=cartItemRepository.save(cartItem);
 		
 		return createdCartItem;
