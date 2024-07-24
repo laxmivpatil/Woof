@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.techverse.DTO.ApiResponse1;
 import com.example.techverse.DTO.SavedPostResponseDTO;
 import com.example.techverse.Model.Product;
 import com.example.techverse.Model.SavedPost;
@@ -33,7 +34,9 @@ import com.example.techverse.Repository.SavedPostRepository;
 import com.example.techverse.Repository.StoryRepository;
 import com.example.techverse.Repository.UserRepository;
 import com.example.techverse.exception.ProductException;
+import com.example.techverse.exception.UnauthorizedAccessException;
 import com.example.techverse.exception.UserException;
+import com.example.techverse.service.CartService;
 import com.example.techverse.service.ProductService;
 import com.example.techverse.service.UserService;
 import com.google.cloud.storage.Blob;
@@ -49,6 +52,9 @@ public class UserController {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	private CartService cartService;
 	
 	@Autowired
 	UserService userService;
@@ -265,4 +271,28 @@ public class UserController {
 	        return response; 
     
     }
+    
+    
+    
+
+	@PostMapping("/api/user/favorite-products/addtocart")
+    public Map<String, Object> addFavoriteProducttocart(@RequestHeader("Authorization") String jwt, @RequestParam Long productId)throws UserException,ProductException {
+		Map<String,Object> response = new HashMap<>();
+	      
+		//// User user = userRepository.findById(entityId).orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+		// System.out.println(req.getQuantity()+"hi am");
+		
+		Optional<User> user =userRepository.findByToken(jwt.substring(7));
+		if(user.isEmpty()) {
+			 response.put("status", false);
+		        response.put("message", "Invalid token");
+		        return response;
+		}
+	         cartService.addCartItemfromwishlist(user.get().getId(),productId,1);
+	         userService.deleteFavoriteProduct(user.get().getId(), productId);
+		  
+			 response.put("message","Item added to cart successfully");
+			 response.put("status", false);
+			 return response;
+	    }
 }

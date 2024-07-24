@@ -37,7 +37,34 @@ public class CartService {
 		
 		return cartRepository.save(cart);
 	}
-
+	public String addCartItemfromwishlist(Long userId,Long productId,int quantity) throws ProductException {
+		Cart cart=cartRepository.findByUserId(userId);
+		
+		Product product=productService.findProductById(productId);
+		
+		CartItem isPresent=cartItemService.isCartItemExist(cart, product, userId);
+		
+		if(isPresent==null) {
+			CartItem cartItem=new CartItem();
+			cartItem.setProduct(product);
+			cartItem.setCart(cart);
+			cartItem.setQuantity(quantity);
+			cartItem.setUserId(userId);
+			Long price=0L;
+			 
+				  price= (long) (quantity*product.getPrice());
+				 
+			cartItem.setPrice(price);
+			cartItem.setSize("");
+			
+			CartItem createdCartItem=cartItemService.createCartitem(cartItem);
+			cart.getCartItems().add(createdCartItem);
+			
+		}
+		
+		
+		return "Item Add To Cart";
+	}
 	 
 	public String addCartItem(Long userId, AddItemRequest req) throws ProductException {
 		Cart cart=cartRepository.findByUserId(userId);
