@@ -201,33 +201,7 @@ public class AddressController {
      	}
      	// Set the user for the shipping address
      	return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
      
-         
-
- 
-       
-
-        
-
-        // Set all other addresses of the user to non-default
        
     }
     @GetMapping("/getshippingaddresses/{entityType}/{entityId}")
@@ -271,32 +245,7 @@ public class AddressController {
     	}
     	// Set the user for the shipping address
     	return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
-   	
-   	
-   	
-   	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	 
-        
- 
-        
+   	  
     }
     @GetMapping("/getshippingaddress/default/{entityType}/{entityId}")
     public ResponseEntity<Map<String, Object>> getDefaultShippingAddressesByUser(@PathVariable String entityType, @PathVariable Long entityId,@RequestHeader("Authorization") String jwt) throws UnauthorizedAccessException  {
@@ -371,114 +320,207 @@ public class AddressController {
     	}
     	// Set the user for the shipping address
     	return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
-   	
-   	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-
-        // Filter shipping addresses where setDefaultAddress is true
+    // Filter shipping addresses where setDefaultAddress is true
         
     }
     
     
-    /*
+     
     
-    @PutMapping("/editshippingaddress/{addressId}")
+    @PutMapping("/editshippingaddress/{entityType}/{entityId}/{addressId}")
     public ResponseEntity<Map<String, Object>> editShippingAddress(
+    		@PathVariable String entityType, @PathVariable Long entityId,
             @PathVariable("addressId") Long addressId,
             @RequestBody ShippingAddress updatedAddress,
-            @RequestHeader("Authorization") String jwt)throws UserException {
-    	User user =userService.findUserProfileByJwt(jwt).get();
-        
+            @RequestHeader("Authorization") String jwt) throws UnauthorizedAccessException  {
+    	
+    	 Map<String,Object> response = new HashMap<>();
+    	 Optional<ShippingAddress> optionalShippingAddress = shippingAddressRepository.findById(addressId);
+         if (optionalShippingAddress.isEmpty()) {
+             // Handle case where address ID is not found
+             Map<String, Object> errorResponse = new HashMap<>();
+             errorResponse.put("status", false);
+             errorResponse.put("message", "Shipping address not found for ID: " + addressId);
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+         }
+         ShippingAddress shippingAddress = optionalShippingAddress.get();
+         shippingAddress.setSetDefaultAddress(true);
+     	switch (entityType.toLowerCase()) {
+     case "user":
+ 		User user = userRepository.findById(entityId)
+ 				.orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+ 		 ShippingAddress existingAddress = optionalShippingAddress.get();
+         // Check if the existing address belongs to the user
+         if (!existingAddress.getUser().equals(user)) {
+             Map<String, Object> errorResponse = new HashMap<>();
+             errorResponse.put("status", false);
+             errorResponse.put("message", "Shipping address does not belong to the user");
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+         }
+
+         // Update the existing address with the new data
+         existingAddress.setStreet1(updatedAddress.getStreet1());
+         existingAddress.setStreet2(updatedAddress.getStreet2());
+         existingAddress.setCity(updatedAddress.getCity());
+         existingAddress.setPincode(updatedAddress.getPincode());
+         existingAddress.setMobile(updatedAddress.getMobile());
+      //   existingAddress.setAlternateMobile(updatedAddress.getAlternateMobile());
+        // existingAddress.setLandmark(updatedAddress.getLandmark());
+         existingAddress.setState(updatedAddress.getState());
+         existingAddress.setCountry(updatedAddress.getCountry());
+    //     existingAddress.setAddressType(updatedAddress.getAddressType());
+         existingAddress.setSetDefaultAddress(updatedAddress.isSetDefaultAddress());
+
+         shippingAddressRepository.save(existingAddress);
 
         
-        Optional<ShippingAddress> optionalShippingAddress = shippingAddressRepository.findById(addressId);
-        if (optionalShippingAddress.isEmpty()) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("status", false);
-            errorResponse.put("message", "Shipping address not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
+         response.put("status", true);
+         response.put("message", "Shipping address updated successfully");
+         response.put("shippingAddress", existingAddress);
 
-        ShippingAddress existingAddress = optionalShippingAddress.get();
-        // Check if the existing address belongs to the user
-        if (!existingAddress.getUser().equals(user)) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("status", false);
-            errorResponse.put("message", "Shipping address does not belong to the user");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
+         return ResponseEntity.ok(response);
 
-        // Update the existing address with the new data
-        existingAddress.setStreet1(updatedAddress.getStreet1());
-        existingAddress.setStreet2(updatedAddress.getStreet2());
-        existingAddress.setCity(updatedAddress.getCity());
-        existingAddress.setPincode(updatedAddress.getPincode());
-        existingAddress.setMobile(updatedAddress.getMobile());
-        existingAddress.setAlternateMobile(updatedAddress.getAlternateMobile());
-        existingAddress.setLandmark(updatedAddress.getLandmark());
-        existingAddress.setState(updatedAddress.getState());
-        existingAddress.setCountry(updatedAddress.getCountry());
-        existingAddress.setAddressType(updatedAddress.getAddressType());
-        existingAddress.setSetDefaultAddress(updatedAddress.isSetDefaultAddress());
+        
+ 		 
+ 	case "ngo":
+ 		NGO ngo = NgoRepository.findById(entityId)
+ 				.orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+ 		ngo.getShippingAddresses().forEach(address -> {
+             if (!address.getId().equals(addressId)) {
+                 address.setSetDefaultAddress(false);
+             }
+         });
 
-        shippingAddressRepository.save(existingAddress);
+         // Save the updated shipping address and user
+         shippingAddressRepository.save(shippingAddress);
+        NgoRepository.save(ngo);
 
-        Map<String, Object> response = new HashMap<>();
+        
+         response.put("ShippingAddress", shippingAddress);
+         response.put("status", true);
+         response.put("message", "Default shipping address set successfully");
+
+         return ResponseEntity.ok(response);
+ 	 
+
+ 	case "veterinarian":
+ 		Veterinarian veterinarian = veterinarianRepository.findById(entityId)
+ 				.orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+ 		veterinarian.getShippingAddresses().forEach(address -> {
+            if (!address.getId().equals(addressId)) {
+                address.setSetDefaultAddress(false);
+            }
+        });
+
+        // Save the updated shipping address and user
+        shippingAddressRepository.save(shippingAddress);
+        veterinarianRepository.save(veterinarian);
+
+       
+        response.put("ShippingAddress", shippingAddress);
         response.put("status", true);
-        response.put("message", "Shipping address updated successfully");
-        response.put("shippingAddress", existingAddress);
+        response.put("message", "Default shipping address set successfully");
 
         return ResponseEntity.ok(response);
-    }
+ 		 
+     	}
+     	// Set the user for the shipping address
+     	return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
+    	
+    	 
+        
+
+        
+       
+           }
     
     
-    @DeleteMapping("/deleteshippingaddress/{addressId}")
+    @DeleteMapping("/deleteshippingaddress/{entityType}/{entityId}/{addressId}")
     public ResponseEntity<Map<String, Object>> deleteShippingAddress(
-            @PathVariable("addressId") Long addressId,
-            @RequestHeader("Authorization") String jwt) throws UserException {
-    	User user =userService.findUserProfileByJwt(jwt).get();
-        
-
-        
-        Optional<ShippingAddress> optionalShippingAddress = shippingAddressRepository.findById(addressId);
-        if (optionalShippingAddress.isEmpty()) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("status", false);
-            errorResponse.put("message", "Shipping address not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
-        ShippingAddress shippingAddress = optionalShippingAddress.get();
-        // Check if the shipping address belongs to the user
-        if (!shippingAddress.getUser().equals(user)) {
+    		@PathVariable String entityType, @PathVariable Long entityId,  @PathVariable("addressId") Long addressId,
+            @RequestHeader("Authorization") String jwt) throws UnauthorizedAccessException  {
+    	
+    	 Map<String,Object> response = new HashMap<>();
+    	 Optional<ShippingAddress> optionalShippingAddress = shippingAddressRepository.findById(addressId);
+         if (optionalShippingAddress.isEmpty()) {
+             // Handle case where address ID is not found
+             Map<String, Object> errorResponse = new HashMap<>();
+             errorResponse.put("status", false);
+             errorResponse.put("message", "Shipping address not found for ID: " + addressId);
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+         }
+         ShippingAddress shippingAddress = optionalShippingAddress.get();
+          
+     	switch (entityType.toLowerCase()) {
+     case "user":
+ 		User user = userRepository.findById(entityId)
+ 				.orElseThrow(() -> new UnauthorizedAccessException("User not found"));
+ 		  
+ 		if (!shippingAddress.getUser().equals(user)) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("status", false);
             errorResponse.put("message", "Shipping address does not belong to the user");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
-
-        shippingAddressRepository.delete(shippingAddress);
-
-        Map<String, Object> response = new HashMap<>();
+        // Save the updated shipping address and user
+ 	    shippingAddressRepository.delete(shippingAddress);
+      
+       
+         
         response.put("status", true);
-        response.put("message", "Shipping address deleted successfully");
+        response.put("message", " shipping address delete successfully");
 
         return ResponseEntity.ok(response);
+        
+ 		 
+ 	case "ngo":
+ 		NGO ngo = NgoRepository.findById(entityId)
+ 				.orElseThrow(() -> new UnauthorizedAccessException("NGO not found"));
+ 	 
+ 		if (!shippingAddress.getNgo().equals(ngo)) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", false);
+            errorResponse.put("message", "Shipping address does not belong to the user");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+         // Save the updated shipping address and user
+ 		 shippingAddressRepository.delete(shippingAddress);
+ 	      
+ 	       
+         
+         response.put("status", true);
+         response.put("message", " shipping address delete successfully");
+         return ResponseEntity.ok(response);
+
+ 	case "veterinarian":
+ 		Veterinarian veterinarian = veterinarianRepository.findById(entityId)
+ 				.orElseThrow(() -> new UnauthorizedAccessException("Veterinarian not found"));
+ 		if (!shippingAddress.getVeterinarian().equals(veterinarian)) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", false);
+            errorResponse.put("message", "Shipping address does not belong to the user");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+        // Save the updated shipping address and user
+ 		shippingAddressRepository.delete(shippingAddress);
+ 	      
+ 	       
+         
+         response.put("status", true);
+         response.put("message", " shipping address delete successfully");
+         return ResponseEntity.ok(response);
+ 		 
+     	}
+     	// Set the user for the shipping address
+     	return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
+    	
+    	
+    	
+ 
+
+        
     }
+    /*
     @GetMapping("/getshippingaddress/{addressId}")
     public ResponseEntity<Map<String, Object>> getShippingAddressById(
             @PathVariable("addressId") Long addressId,
